@@ -1,0 +1,29 @@
+# config/services.yaml
+services:
+    _defaults:
+        autowire: true          # Automatically injects dependencies in your services.
+        autoconfigure: true     # Automatically registers your services as commands, event subscribers, etc.
+        public: false           # Allows optimizing the container by removing unused services; this also means
+                                # fetching services directly from the container via $container->get() won't work.
+                                # The best practice is to be explicit about your dependencies anyway.
+        bind:
+            #$projectDir: '%kernel.project_dir%'
+
+    Diversworld\ContaoDicomaBundle\:
+        resource: ../src/
+        exclude: ../src/{DependencyInjection,Model,Session}
+
+    # Add a session bag
+    diversworld.contao_dicoma_bundle.session.factory:
+        class: Diversworld\ContaoDicomaBundle\Session\SessionFactory
+        decorates: session.factory
+        arguments:
+            - '@diversworld.contao_dicoma_bundle.session.factory.inner'
+            - '@diversworld.contao_dicoma_bundle.session.attribute.array_attribute_bag'
+
+    diversworld.contao_dicoma_bundle.session.attribute.array_attribute_bag:
+        class: Diversworld\ContaoDicomaBundle\Session\Attribute\ArrayAttributeBag
+        arguments:
+            - _diversworld_contao_dicoma_attributes
+        calls:
+            - [ setName, [ diversworld_contao_dicoma ] ]

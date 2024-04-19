@@ -1,0 +1,4 @@
+# config/routes.yaml
+diversworld_contao_dicoma.controller:
+    resource: ../src/Controller
+    type: annotation
