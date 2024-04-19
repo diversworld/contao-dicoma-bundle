@@ -15,43 +15,46 @@ declare(strict_types=1);
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
 
-// Table config
-$GLOBALS['TL_DCA']['tl_calendar']['config']['ctable'][] = 'tl_dw_tanks';
-
 // Overwrite child record callback
 $GLOBALS['TL_DCA']['tl_calendar_events']['list']['sorting']['child_record_callback'] = [
     CalendarEvents::class,
-    'listEvents',
+    'listTanks',
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['config']['onsubmit_callback'] = [
+    [CalendarEvents::class, 'calculateAllGrossPrices']
 ];
 
 // Palettes
 PaletteManipulator::create()
-    ->addLegend('vendor_legend', 'details_legend', PaletteManipulator::POSITION_AFTER)
-    ->addField([
-        'vendorname',
-        'street',
-        'postal',
-        'city',
-    ], 'location', PaletteManipulator::POSITION_APPEND)
+    ->addLegend('tuv_legend', 'date_legend', PaletteManipulator::POSITION_AFTER)
+    ->addLegend('vendor_legend', 'tuv_legend', PaletteManipulator::POSITION_AFTER)
+    ->addLegend('article_legend', 'vendor_legend', PaletteManipulator::POSITION_AFTER)
+    ->addField(['addCheckInfo'], 'tuv_legend', PaletteManipulator::POSITION_APPEND)
+    ->addField(['addVendorInfo'], 'vendor_legend', PaletteManipulator::POSITION_APPEND)
+    ->addField(['addArticleInfo'], 'article_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_calendar_events');
 
 // Selector
-$GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addBCheckInfo';
+$GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addCheckInfo';
+$GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addVendorInfo';
+$GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addArticleInfo';
 
 // Subpalettes
-$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addBCheckInfo'] = '';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addCheckInfo'] = 'is_tuv_appointment';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addVendorInfo'] = 'vendorName, street, postal, city, vendorEmail, vendorPhone';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addArticleInfo'] = 'checkArticles';
 
 // Operations
 $GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations']['tanks'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_calendar_events']['tanks'],
-    'href' => 'do=calendar&table=tl_calendar_events_member',
-    'icon' => 'bundles/diversworlddicomabundle/icons/tanks.png',
+    'href' => 'do=calendar&table=tl_dw_tanks',
+    'icon' => 'bundles/diversworldcontaodicoma/icons/tanks.png',
 ];
 
-// Fields
+//Fields
 $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['checkArticles'] = [
     'inputType' => 'multiColumnEditor',
-    'onsubmit_callback' => [CalendarEvents::class, 'calculateAllGrossPrices'],
     'eval'      => [
         'multiColumnEditor' => [
             'skipCopyValuesOnAdd' => false,
@@ -65,8 +68,8 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['checkArticles'] = [
                 'articleSize' => [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articleName'],
                     'inputType' => 'select',
-                    'options'   => ['3','5','7','8','10','12','15','18','20','40','80'],
-                    'eval'      => ['groupStyle' => 'width:300px']
+                    'options'   => ['2','3','5','7','8','10','12','15','18','20','40','80'],
+                    'eval'      => ['includeBlankOption' => true, 'groupStyle' => 'width:300px']
                 ],
                 'articleNotes'  => [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articleNotes'],
@@ -76,7 +79,8 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['checkArticles'] = [
                 'articlePriceNetto' => [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articlePriceNetto'],
                     'inputType' => 'text',
-                    'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true]
+                    'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true],
+                    'save_callback' => [CalendarEvents::class, 'calculateGross'],
                 ],
                 'articlePriceBrutto' => [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articlePriceBrutto'],
@@ -89,12 +93,48 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['checkArticles'] = [
                     'eval'      => ['groupStyle' => 'width:40px']
                 ],
             ]
-        ],
-        'sql'       => "blob NULL"
-    ]
+        ]
+    ],
+    'sql'       => "blob NULL"
 ];
 
-$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorname'] = [
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['is_tuv_appointment'] = [
+    'eval'      => ['tl_class' => 'clr m12'],
+    'exclude'   => true,
+    'filter'    => true,
+    'inputType' => 'checkbox',
+    'sql'       => "char(1) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addCheckInfo'] = [
+    'eval'      => [
+        'submitOnChange' => true,
+        'tl_class'       => 'clr m12',
+    ],
+    'exclude'   => true,
+    'filter'    => true,
+    'inputType' => 'checkbox',
+    'sql'       => "char(1) NOT NULL default ''",
+];$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addVendorInfo'] = [
+    'eval'      => [
+        'submitOnChange' => true,
+        'tl_class'       => 'clr m12',
+    ],
+    'exclude'   => true,
+    'filter'    => true,
+    'inputType' => 'checkbox',
+    'sql'       => "char(1) NOT NULL default ''",
+];$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addArticleInfo'] = [
+    'eval'      => [
+        'submitOnChange' => true,
+        'tl_class'       => 'clr m12',
+    ],
+    'exclude'   => true,
+    'filter'    => true,
+    'inputType' => 'checkbox',
+    'sql'       => "char(1) NOT NULL default ''",
+];
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorName'] = [
     'eval' => [
         'mandatory' => false,
         'maxlength' => 255,
@@ -124,7 +164,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['street'] = [
 
 $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['postal'] = [
     'eval' => [
-        'maxlength' => 32,
+        'maxlength' => 12,
         'tl_class' => 'w50',
     ],
     'exclude' => true,
@@ -148,13 +188,11 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['city'] = [
     'sql' => "varchar(255) NOT NULL default ''",
 ];
 
-$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['bookingStartDate'] = [
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorEmail'] = [
     'default' => null,
     'eval' => [
-        'rgxp' => 'datim',
-        'mandatory' => true,
+        'mandatory' => false,
         'doNotCopy' => true,
-        'datepicker' => true,
         'tl_class' => 'clr w50 wizard',
     ],
     'exclude' => true,
@@ -163,13 +201,11 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['bookingStartDate'] = [
     'sql' => 'int(10) unsigned NULL',
 ];
 
-$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['bookingEndDate'] = [
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorPhone'] = [
     'default' => null,
     'eval' => [
-        'rgxp' => 'datim',
-        'mandatory' => true,
+        'mandatory' => false,
         'doNotCopy' => true,
-        'datepicker' => true,
         'tl_class' => 'w50 wizard',
     ],
     'exclude' => true,

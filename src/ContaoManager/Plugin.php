@@ -18,17 +18,20 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
+use Diversworld\ContaoDicomaBundle\DiversworldContaoDicomaBundle;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouteCollection;
+use Contao\CoreBundle\ContaoCoreBundle;
+use Contao\CalendarBundle\ContaoCalendarBundle;
 
 class Plugin implements BundlePluginInterface, RoutingPluginInterface
 {
     public function getBundles(ParserInterface $parser): array
     {
         return [
-            BundleConfig::create('Diversworld\ContaoDicomaBundle\DiversworldContaoDicomaBundle')
-                ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle']),
+            BundleConfig::create(DiversworldContaoDicomaBundle::class)
+                ->setLoadAfter([ContaoCoreBundle::class, ContaoCalendarBundle::class]),
         ];
     }
 

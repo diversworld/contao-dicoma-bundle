@@ -15,9 +15,9 @@ use Contao\Backend;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
+use Contao\Input;
 use Contao\System;
-use Diversworld\ContaoDicomaBundle\Model\TanksModel;
-use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEventsMember;
+use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 
 /**
  * Table tl_dw_tanks
@@ -28,12 +28,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         'ptable'            => 'tl_calendar_events',
         'enableVersioning'  => true,
         'onsubmit_callback' => [],
-        'onload_callback'   => [
-            [
-                CalendarEventsMember::class,
-                'downloadEventRegistrations',
-            ],
-        ],
+        'onload_callback'   => array('tl_dw_tanks', 'filterTanksByEventId'),
         'ondelete_callback' => [],
         'sql'               => array(
             'keys'          => array(
@@ -44,13 +39,14 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
     'list'              => array(
         'sorting'           => array(
             'mode'              => DataContainer::MODE_SORTABLE,
-            'fields'            => array('title', 'serialnumber', 'size', 'lastCheckDate', 'nextCheckDate'),
-            'flag'              => DataContainer::SORT_INITIAL_LETTERS_DESC,
-            'panelLayout'       => 'filter;sort,search,limit'
+            'fields'            => array('member'),
+            'flag'              => DataContainer::SORT_ASC,
+            'group_callback'   => array('tl_dw_tanks', 'getHeaderWithTotal'),
+            'panelLayout'       => 'filter;sort,search,limit',
         ),
         'label'             => array(
-            'fields'            => array('title', 'serialnumber', 'size', 'lastCheckDate', 'nextCheckDate'),
-            'format'            => '%s - %s %s L - Letzter TÜV %s nächster TÜV %s ',
+            'fields'            => array('title', 'serialNumber', 'size', 'lastCheckDate', 'nextCheckDate', 'member'),
+            'format'            => '%s - %s %s L - Letzter TÜV %s nächster TÜV %s - %s ',
             'label_callback'    => array('tl_dw_tanks', 'formatCheckDates'),
         ),
         'global_operations' => array(
@@ -84,14 +80,26 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
                 'href'          => 'act=toggle&amp;field=published',
                 'icon'          => 'visible.svg',
                 'showInHeader'  => true
-            )
-        )
+            ),
+            'my_custom_button' => array(
+                'label' => &$GLOBALS['TL_LANG']['MSC']['myCustomButton'],
+                'href'  => 'key=myCustom',
+                'icon'  => 'bundles/mysite/my-icon.svg',
+                //'button_callback' => array('mysite.listener.invoicelistener', 'onInvoiceButtonClick')
+            ),
+            'operations' => array(
+                //'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tanks'],
+                'href' => 'do=check_collection&table=tl_dw_check_invoice',
+                'icon' => 'editor.svg'
+            ),
+        ),
     ),
     'palettes'          => array(
         '__selector__'      => array('addSubpalette'),
-        'default'           => '{first_legend},title,alias;{details_section},serialnumber,size,member,lastCheckDate,nextCheckDate;
+        'default'           => '{title_legend},title,alias;
+                                {details_legend},serialNumber,size,member,pid,lastCheckDate,nextCheckDate;
                                 {notes_legend},addSubpalette;
-                                {publish_legend},published,start,stop'
+                                {publish_legend},published,start,stop;'
     ),
     'subpalettes'       => array(
         'addSubpalette'     => 'notes',
@@ -100,12 +108,27 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         'id'                => array(
             'sql'           => "int(10) unsigned NOT NULL auto_increment"
         ),
-        'pid'           => array
-        (
-            'foreignKey'    => 'tl_checks.title',
+        'pid'           => [
+            'inputType'     => 'select',
+            'foreignKey'    => 'tl_calendar_events.title',
+            'eval'          => ['submitOnChange' => true,'mandatory'=>false, 'includeBlankOption'=>true, 'tl_class' => 'w33 clr'],
             'sql'           => "int(10) unsigned NOT NULL default 0",
-            'relation'      => array('type'=>'belongsTo', 'load'=>'lazy')
-        ),
+            'relation'      => array('type'=>'hasOne', 'load'=>'lazy'),
+            'save_callback' => array
+            (
+                array('tl_dw_tanks', 'setLastCheckDate')
+            ),
+            'options_callback' => function() {
+                $db = Contao\Database::getInstance();
+                $result = $db->execute("SELECT id, title FROM tl_calendar_events WHERE is_tuv_appointment = '1' and addCheckInfo = '1'");
+
+                $options = [];
+                while($result->next()) {
+                    $options[$result->id] = $result->title;
+                }
+                return $options;
+            }
+        ],
         'tstamp'        => array(
             'sql'           => "int(10) unsigned NOT NULL default '0'"
         ),
@@ -115,9 +138,8 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'search'        => true,
             'filter'        => true,
             'sorting'       => true,
-            'reference'     => &$GLOBALS['TL_LANG']['tl_dw_tanks'],
             'flag'          => DataContainer::SORT_INITIAL_LETTER_ASC,
-            'eval'          => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'),
+            'eval'          => array('mandatory' => true, 'maxlength' => 25, 'tl_class' => 'w50'),
             'sql'           => "varchar(255) NOT NULL default ''"
         ),
         'alias'         => array
@@ -131,15 +153,15 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             ),
             'sql'           => "varchar(255) BINARY NOT NULL default ''"
         ),
-        'serialnumber'  => array(
+        'serialNumber'  => array(
             'inputType'     => 'text',
             'exclude'       => true,
             'search'        => true,
             'filter'        => true,
             'sorting'       => true,
-            'flag'          => DataContainer::SORT_ASC,
+            'flag'          => DataContainer::SORT_INITIAL_LETTER_ASC,
             'eval'          => array('mandatory' => true, 'maxlength' => 25, 'tl_class' => 'w25'),
-            'sql'           => "varchar(255) NOT NULL default ''"
+            'sql'           => "varchar(50) NOT NULL default ''"
         ),
         'size'          => array(
             'inputType'     => 'select',
@@ -147,25 +169,25 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'search'        => true,
             'filter'        => true,
             'sorting'       => true,
-            'reference'     => &$GLOBALS['TL_LANG']['tl_dw_tanks'],
-            'options'       => array('3','5','7','8','10','12','15','18','20'),
+            'reference'     => &$GLOBALS['TL_LANG']['tl_dw_tanks']['sizes'],
+            'options'       => array('2','3','5','7','8','10','12','15','18','20','40','80'),
             'eval'          => array('includeBlankOption' => true, 'tl_class' => 'w25'),
-            'sql'           => "varchar(255) NOT NULL default ''",
+            'sql'           => "varchar(20) NOT NULL default ''",
         ),
         'lastCheckDate' => array
         (
             'inputType'     => 'text',
-            'eval'          => array('submitOnChange' => true, 'rgxp'=>'date', 'mandatory'=>true, 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
-            'save_callback' => array
-            (
-                array('tl_dw_tanks', 'calculateNextCheckDate')
-            ),
+            'sorting'       => true,
+            'flag'          => DataContainer::SORT_YEAR_DESC,
+            'eval'          => array('submitOnChange' => true, 'rgxp'=>'date', 'mandatory'=>false, 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
             'sql' => "bigint(20) NULL"
         ),
         'nextCheckDate' => array
         (
             'inputType'     => 'text',
-            'eval'          => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
+            'sorting'       => true,
+            'flag'          => DataContainer::SORT_YEAR_DESC,
+            'eval'          => array('submitOnChange' => true,'rgxp'=>'date', 'doNotCopy'=>false, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
             'sql'           => "bigint(20) NULL"
         ),
         'member'        => array(
@@ -175,8 +197,9 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'filter'        => true,
             'sorting'       => true,
             'reference'     => &$GLOBALS['TL_LANG']['tl_dw_tanks'],
-            'foreignKey'    => 'tl_user.name',
+            'foreignKey'    => 'tl_member.id',
             'eval'          => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w33'),
+            'options_callback' => array('tl_dw_tanks', 'getMemberOptions'),
             'sql'           => "varchar(255) NOT NULL default ''",
         ),
         'addSubpalette' => array(
@@ -263,30 +286,13 @@ class tl_dw_tanks extends Backend
         return $varValue;
     }
 
-    public function calculateNextCheckDate($varValue, DataContainer $dc)
-    {
-        if (!$varValue) {
-            return $varValue;
-        }
-
-        $lastCheckDate = new \DateTime('@'.$varValue);
-        $lastCheckDate->modify('+2 years');
-
-        $nextCheckDate = $lastCheckDate->getTimestamp();
-
-        $updateStmt = Database::getInstance()
-            ->prepare("UPDATE tl_dw_tanks SET nextCheckDate=? WHERE id=?");
-
-        $updateStmt->execute($nextCheckDate, $dc->id);
-
-        // The new value of lastCheckDate is returned to be saved in the database.
-        return $varValue;
-    }
-
     function formatCheckDates($row, $label) {
-        $title = isset($row['title']) ? $row['title'] : '';
-        $serialnumber = isset($row['serialnumber']) ? $row['serialnumber'] : '';
-        $size = isset($row['size']) ? $row['size'] : '';
+
+        $title = $row['title'] ?? '';
+        $serialnumber = $row['serialNumber'] ?? '';
+        $size = $row['size'] ?? '';
+        $invoices = $this->listChildren($row);
+        $lastTotal = $this->getLastInvoiceTotal($row);
 
         $lastCheckDate = isset($row['lastCheckDate']) && is_numeric($row['lastCheckDate'])
             ? date('d.m.Y', $row['lastCheckDate'])
@@ -295,13 +301,114 @@ class tl_dw_tanks extends Backend
         $nextCheckDate = isset($row['nextCheckDate']) && is_numeric($row['nextCheckDate'])
             ? date('d.m.Y', $row['nextCheckDate'])
             : 'N/A';
+        if($invoices == 1) {
+            return sprintf(' %s - %s - %s L - Letzter TÜV %s - Nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s]</span>',
+                $title,
+                $serialnumber,
+                $size,
+                $lastCheckDate,
+                $nextCheckDate,
+                $invoices,
+                $lastTotal
+            );
+        }elseif ($invoices >= 2) {
+            return sprintf('%s - %s - %s L - Letzter TÜV %s - Nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s]</span>',
+                $title,
+                $serialnumber,
+                $size,
+                $lastCheckDate,
+                $nextCheckDate,
+                $invoices,
+                $lastTotal
+            );
+        } else {
+            return sprintf('%s - %s - %s L - Letzter TÜV %s - Nächster TÜV %s',
+                $title,
+                $serialnumber,
+                $size,
+                $lastCheckDate,
+                $nextCheckDate
+            );
+        }
+    }
 
-        return sprintf('Inventarnr. %s - Seriennr. %s Größe %s L - Letzter TÜV %s - naechster TÜV %s',
-            $title,
-            $serialnumber,
-            $size,
-            $lastCheckDate,
-            $nextCheckDate
-        );
+    public function setLastCheckDate($varValue, DataContainer $dc)
+    {
+        if ($varValue)
+        {
+            // Holen Sie das startDate des ausgewählten TÜV-Termins
+            $db = Contao\Database::getInstance();
+            $result = $db->prepare("SELECT startDate FROM tl_calendar_events WHERE id = ?")
+                ->execute($varValue);
+
+            $row = $result->fetchAssoc();
+
+            $lastCheckDate = new \DateTime('@'.$row['startDate']);
+            $lastCheckDate->modify('+2 years');
+
+            $nextCheckDate = $lastCheckDate->getTimestamp();
+
+            // Setzen Sie lastCheckDate auf das startDate des ausgewählten TÜV-Termins
+            $updateStmt = Database::getInstance()
+                ->prepare("UPDATE tl_dw_tanks SET lastCheckDate = ?, nextCheckDate = ? WHERE id = ?");
+            $updateStmt->execute($row['startDate'], $nextCheckDate, $dc->id);
+        }
+
+        return $varValue;
+    }
+
+    public function getMemberOptions()
+    {
+        $members = Database::getInstance()->execute("SELECT id, CONCAT(firstname, ' ', lastname) as name FROM tl_member")->fetchAllAssoc();
+        $options = array();
+
+        foreach($members as $member)
+        {
+            $options[$member['id']] = $member['name'];
+        }
+
+        return $options;
+    }
+
+    public function getHeaderWithTotal($row)
+    {
+        // Holen Sie den Gesamtbetrag der Rechnungen für den aktuellen Member
+        $total = Database::getInstance()->prepare("SELECT SUM(priceTotal) as total FROM tl_dw_check_invoice WHERE member=?")->execute($row['member'])->total;
+
+        // Füge den Totalbetrag zum Gruppennamen hinzu
+        return $row['member'] . '<span style="color:#b3b3b3; padding-left:4px;"> (Gesamtbetrag: ' . $total . '€)</span>';
+    }
+
+    public function getLastInvoiceTotal($arrRow)
+    {
+        $tankId = $arrRow['id'];
+
+        $lastInvoice = Database::getInstance()
+            ->prepare("SELECT priceTotal AS total FROM tl_dw_check_invoice WHERE pid = ?")
+            ->execute($tankId)
+            ->fetchAssoc()['total'];
+
+        return $lastInvoice;
+    }
+
+    public function listChildren($arrRow) {
+        // Get the ID of the current tank
+        $tankId = $arrRow['id'];
+
+        // Query the database to find the number of invoices related to this tank
+        $numberOfInvoices = Database::getInstance()
+            ->prepare("SELECT COUNT(*) AS count FROM tl_dw_check_invoice WHERE pid = ?")
+            ->execute($tankId)
+            ->fetchAssoc()['count'];
+
+        // Return the count of invoices
+        return $numberOfInvoices;
+    }
+
+    public function filterTanksByEventId(DataContainer $dc)
+    {
+        if (Input::get('do') == 'calendar' && ($eventId = Input::get('event_id')) !== null) {
+            $GLOBALS['TL_DCA']['tl_dw_tanks']['list']['sorting']['filter'] = [['pid=?', $eventId]];
+        }
     }
 }

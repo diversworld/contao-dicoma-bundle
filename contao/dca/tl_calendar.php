@@ -16,23 +16,15 @@ use Contao\CoreBundle\DataContainer\PaletteManipulator;
 
 // Palettes
 PaletteManipulator::create()
-    ->addLegend('tank_check_legend', 'title_legend', PaletteManipulator::POSITION_AFTER)
+    ->addLegend('tank_check_legend', 'title_legend')
     ->addField(['tankChecks'], 'tank_check_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_calendar');
 
 // Fields
 $GLOBALS['TL_DCA']['tl_calendar']['fields']['tankChecks'] = [
-    'exclude'    => true,
-    'inputType'  => 'pageTree',
-    'foreignKey' => 'tl_page.title',
-    'eval'       => [
-        'mandatory' => true,
-        'fieldType' => 'radio',
-        'tl_class'  => 'clr',
-    ],
-    'sql'        => "int(10) unsigned NOT NULL default '0'",
-    'relation'   => [
-        'type' => 'hasOne',
-        'load' => 'lazy',
-    ],
+    'eval'      => ['tl_class' => 'clr m12'],
+    'exclude'   => true,
+    'filter'    => true,
+    'inputType' => 'checkbox',
+    'sql'       => "char(1) NOT NULL default ''",
 ];

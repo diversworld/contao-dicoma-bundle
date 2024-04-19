@@ -1,5 +1,6 @@
-![Alt text](docs/logo.png?raw=true "logo")
 
+![AltText](docs/Diversworld-Logo-ws.png?raw=true "Diversworld")
 
-# Welcome to DiCoMa
-This bundle is still under construction.
+# Welcome to Dive Course Manager Bumdle (DiCoMa)
+### This bundle is still under construction.
+
