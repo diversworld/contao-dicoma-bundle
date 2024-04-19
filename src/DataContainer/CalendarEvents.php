@@ -34,7 +34,7 @@ class CalendarEvents
      */
     public function listTanks($arrRow): string
     {
-        if ('1' === $arrRow['is_tuv_appointment']) {
+        if ('1' === $arrRow['addCheckInfo']) {
             $countTanks = TanksModel::countBy('pid', $arrRow['id']);
 
             $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);

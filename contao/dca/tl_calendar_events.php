@@ -31,8 +31,8 @@ PaletteManipulator::create()
     ->addLegend('vendor_legend', 'tuv_legend', PaletteManipulator::POSITION_AFTER)
     ->addLegend('article_legend', 'vendor_legend', PaletteManipulator::POSITION_AFTER)
     ->addField(['addCheckInfo'], 'tuv_legend', PaletteManipulator::POSITION_APPEND)
-    ->addField(['addVendorInfo'], 'vendor_legend', PaletteManipulator::POSITION_APPEND)
-    ->addField(['addArticleInfo'], 'article_legend', PaletteManipulator::POSITION_APPEND)
+//    ->addField(['addVendorInfo'], 'vendor_legend', PaletteManipulator::POSITION_APPEND)
+//    ->addField(['addArticleInfo'], 'article_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_calendar_events');
 
 // Selector
@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addVen
 $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addArticleInfo';
 
 // Subpalettes
-$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addCheckInfo'] = 'is_tuv_appointment';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addCheckInfo'] = 'addVendorInfo, addArticleInfo';
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addVendorInfo'] = 'vendorName, street, postal, city, vendorEmail, vendorPhone';
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addArticleInfo'] = 'checkArticles';
 
@@ -138,7 +138,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorName'] = [
     'eval' => [
         'mandatory' => false,
         'maxlength' => 255,
-        'tl_class' => 'w50',
+        'tl_class' => 'w33',
     ],
     'exclude' => true,
     'flag' => 1,
@@ -152,7 +152,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['street'] = [
     'eval' => [
         'mandatory' => false,
         'maxlength' => 255,
-        'tl_class' => 'w50',
+        'tl_class' => 'w33 clr',
     ],
     'exclude' => true,
     'flag' => 1,
@@ -165,7 +165,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['street'] = [
 $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['postal'] = [
     'eval' => [
         'maxlength' => 12,
-        'tl_class' => 'w50',
+        'tl_class' => 'w25',
     ],
     'exclude' => true,
     'inputType' => 'text',
@@ -178,7 +178,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['city'] = [
     'eval' => [
         'mandatory' => false,
         'maxlength' => 255,
-        'tl_class' => 'w50',
+        'tl_class' => 'w33',
     ],
     'exclude' => true,
     'flag' => 1,
@@ -193,7 +193,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorEmail'] = [
     'eval' => [
         'mandatory' => false,
         'doNotCopy' => true,
-        'tl_class' => 'clr w50 wizard',
+        'tl_class' => 'clr w33 wizard',
     ],
     'exclude' => true,
     'inputType' => 'text',
@@ -206,7 +206,20 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorPhone'] = [
     'eval' => [
         'mandatory' => false,
         'doNotCopy' => true,
-        'tl_class' => 'w50 wizard',
+        'tl_class' => 'w33 wizard',
+    ],
+    'exclude' => true,
+    'inputType' => 'text',
+    'sorting' => true,
+    'sql' => 'int(10) unsigned NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorMobile'] = [
+    'default' => null,
+    'eval' => [
+        'mandatory' => false,
+        'doNotCopy' => true,
+        'tl_class' => 'w33 wizard',
     ],
     'exclude' => true,
     'inputType' => 'text',

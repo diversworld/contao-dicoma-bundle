@@ -120,7 +120,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             ),
             'options_callback' => function() {
                 $db = Contao\Database::getInstance();
-                $result = $db->execute("SELECT id, title FROM tl_calendar_events WHERE is_tuv_appointment = '1' and addCheckInfo = '1'");
+                $result = $db->execute("SELECT id, title FROM tl_calendar_events WHERE addCheckInfo = '1'");
 
                 $options = [];
                 while($result->next()) {
