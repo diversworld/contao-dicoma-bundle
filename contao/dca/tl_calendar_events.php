@@ -42,7 +42,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addArt
 
 // Subpalettes
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addCheckInfo'] = 'addVendorInfo, addArticleInfo';
-$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addVendorInfo'] = 'vendorName, street, postal, city, vendorEmail, vendorPhone';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addVendorInfo'] = 'vendorName, street, postal, city, vendorEmail, vendorPhone, vendorMobile';
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addArticleInfo'] = 'checkArticles';
 
 // Operations
