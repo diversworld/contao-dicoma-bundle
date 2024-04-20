@@ -1,18 +1,19 @@
 {
     "name": "diversworld/contao-dicoma-bundle",
-    "description": "Dive Course Manager - Verwaltung von Tauchkursen für Vereine und Shops",
+    "description": "Dive Course Manager - Verwaltung von Equipment und Tauchkursen für Tauchvereine und oder Tauchschulen",
     "keywords": [
         "contao",
         "bundle",
-        "tag 3",
-        "tag 4"
+        "diving",
+        "diveclub",
+        "diveshop"
     ],
     "type": "contao-bundle",
     "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Diversworld",
-            "email": "eckhard@diversworld.eu",
+            "email": "info@diversworld.eu",
             "homepage": "https://github.com/diversworld",
             "role": "Developer"
         }
@@ -47,6 +48,5 @@
     "scripts": {
         "cs-fixer": "@php tools/ecs/vendor/bin/ecs check config/ contao/ src/ templates/ tests/ --config tools/ecs/config.php --fix --ansi",
         "unit-tests": "@php tools/phpunit/vendor/bin/phpunit -c tools/phpunit/phpunit.xml.dist"
-    },
-    "version": "1.0.0"
+    }
 }

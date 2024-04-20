@@ -40,6 +40,7 @@ $GLOBALS['TL_LANG']['tl_dw_tanks']['toggle'] = "Datensatz mit ID: %s veröffentl
 $GLOBALS['TL_LANG']['tl_dw_tanks']['title'] = ["Inventarnummer", "Geben Sie die Inventarnummer ein"];
 $GLOBALS['TL_LANG']['tl_dw_tanks']['alias'] = ["Alias", "Flaschen-Alias"];
 $GLOBALS['TL_LANG']['tl_dw_tanks']['serialNumber'] = ["Seriennummer", "Geben Sie die Seriennummer ein."];
+$GLOBALS['TL_LANG']['tl_dw_tanks']['o2clean'] = ["O2 Clean", "Die Flasche ist für Sauerstoff und muss O2 clean sein."];
 $GLOBALS['TL_LANG']['tl_dw_tanks']['lastCheckDate'] = ["letzter TÜV", "Datum der letzten TÜV Prüfung."];
 $GLOBALS['TL_LANG']['tl_dw_tanks']['nextCheckDate'] = ["nächster TÜV", "Datum der nächsten TÜV Prüfung."];
 $GLOBALS['TL_LANG']['tl_dw_tanks']['pid'] = ["nächster TÜV-Termin", "Wähle den nächsten TÜV-Termin aus.."];

@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @link https://github.com/diversworld/contao-dicoma-bundle
  */
 use Contao\Backend;
+use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
@@ -39,14 +40,14 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
     'list'              => array(
         'sorting'           => array(
             'mode'              => DataContainer::MODE_SORTABLE,
-            'fields'            => array('member'),
+            'fields'            => array('member, lastCheckDate, nextCheckDate, o2clean'),
             'flag'              => DataContainer::SORT_ASC,
-            'group_callback'   => array('tl_dw_tanks', 'getHeaderWithTotal'),
             'panelLayout'       => 'filter;sort,search,limit',
         ),
         'label'             => array(
-            'fields'            => array('title', 'serialNumber', 'size', 'lastCheckDate', 'nextCheckDate', 'member'),
-            'format'            => '%s - %s %s L - Letzter TÜV %s nächster TÜV %s - %s ',
+            'fields'            => array('title', 'serialNumber', 'size', 'o2clean', 'lastCheckDate', 'nextCheckDate', 'member'),
+            'showColumns'       => true,
+            'format'            => '%s',
             'label_callback'    => array('tl_dw_tanks', 'formatCheckDates'),
         ),
         'global_operations' => array(
@@ -75,29 +76,17 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
                 'icon'          => 'show.svg',
                 'attributes'    => 'style="margin-right:3px"'
             ),
-            'toggle'        => array
-            (
+            'toggle'        => array(
                 'href'          => 'act=toggle&amp;field=published',
                 'icon'          => 'visible.svg',
                 'showInHeader'  => true
-            ),
-            'my_custom_button' => array(
-                'label' => &$GLOBALS['TL_LANG']['MSC']['myCustomButton'],
-                'href'  => 'key=myCustom',
-                'icon'  => 'bundles/mysite/my-icon.svg',
-                //'button_callback' => array('mysite.listener.invoicelistener', 'onInvoiceButtonClick')
-            ),
-            'operations' => array(
-                //'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tanks'],
-                'href' => 'do=check_collection&table=tl_dw_check_invoice',
-                'icon' => 'editor.svg'
-            ),
+            )
         ),
     ),
     'palettes'          => array(
         '__selector__'      => array('addSubpalette'),
         'default'           => '{title_legend},title,alias;
-                                {details_legend},serialNumber,size,member,pid,lastCheckDate,nextCheckDate;
+                                {details_legend},serialNumber,size,o2clean,member,pid,lastCheckDate,nextCheckDate;
                                 {notes_legend},addSubpalette;
                                 {publish_legend},published,start,stop;'
     ),
@@ -106,19 +95,18 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
     ),
     'fields'            => array(
         'id'                => array(
-            'sql'           => "int(10) unsigned NOT NULL auto_increment"
+            'sql'               => "int(10) unsigned NOT NULL auto_increment"
         ),
-        'pid'           => [
-            'inputType'     => 'select',
-            'foreignKey'    => 'tl_calendar_events.title',
-            'eval'          => ['submitOnChange' => true,'mandatory'=>false, 'includeBlankOption'=>true, 'tl_class' => 'w33 clr'],
-            'sql'           => "int(10) unsigned NOT NULL default 0",
-            'relation'      => array('type'=>'hasOne', 'load'=>'lazy'),
-            'save_callback' => array
-            (
+        'pid'               => array(
+            'inputType'         => 'select',
+            'foreignKey'        => 'tl_calendar_events.title',
+            'eval'              => ['submitOnChange' => true,'mandatory'=>false, 'includeBlankOption'=>true, 'tl_class' => 'w33 clr'],
+            'sql'               => "int(10) unsigned NOT NULL default 0",
+            'relation'          => array('type'=>'hasOne', 'load'=>'lazy'),
+            'save_callback'     => array(
                 array('tl_dw_tanks', 'setLastCheckDate')
             ),
-            'options_callback' => function() {
+            'options_callback'  => function() {
                 $db = Contao\Database::getInstance();
                 $result = $db->execute("SELECT id, title FROM tl_calendar_events WHERE addCheckInfo = '1'");
 
@@ -128,115 +116,114 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
                 }
                 return $options;
             }
-        ],
-        'tstamp'        => array(
-            'sql'           => "int(10) unsigned NOT NULL default '0'"
         ),
-        'title'         => array(
-            'inputType'     => 'text',
-            'exclude'       => true,
-            'search'        => true,
-            'filter'        => true,
-            'sorting'       => true,
-            'flag'          => DataContainer::SORT_INITIAL_LETTER_ASC,
-            'eval'          => array('mandatory' => true, 'maxlength' => 25, 'tl_class' => 'w50'),
-            'sql'           => "varchar(255) NOT NULL default ''"
+        'tstamp'            => array(
+            'sql'               => "int(10) unsigned NOT NULL default '0'"
         ),
-        'alias'         => array
-        (
-            'search'        => true,
-            'inputType'     => 'text',
-            'eval'          => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
-            'save_callback' => array
-            (
+        'title'                 => array(
+            'inputType'         => 'text',
+            'exclude'           => true,
+            'search'            => true,
+            'filter'            => true,
+            'sorting'           => true,
+            'flag'              => DataContainer::SORT_INITIAL_LETTER_ASC,
+            'eval'              => array('mandatory' => true, 'maxlength' => 25, 'tl_class' => 'w50'),
+            'sql'               => "varchar(255) NOT NULL default ''"
+        ),
+        'alias'             => array(
+            'search'            => true,
+            'inputType'         => 'text',
+            'eval'              => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
+            'save_callback'     => array(
                 array('tl_dw_tanks', 'generateAlias')
             ),
             'sql'           => "varchar(255) BINARY NOT NULL default ''"
         ),
-        'serialNumber'  => array(
-            'inputType'     => 'text',
-            'exclude'       => true,
-            'search'        => true,
-            'filter'        => true,
-            'sorting'       => true,
-            'flag'          => DataContainer::SORT_INITIAL_LETTER_ASC,
-            'eval'          => array('mandatory' => true, 'maxlength' => 25, 'tl_class' => 'w25'),
-            'sql'           => "varchar(50) NOT NULL default ''"
+        'serialNumber'      => array(
+            'inputType'         => 'text',
+            'exclude'           => true,
+            'search'            => true,
+            'filter'            => true,
+            'sorting'           => true,
+            'flag'              => DataContainer::SORT_INITIAL_LETTER_ASC,
+            'eval'              => array('mandatory' => true, 'maxlength' => 25, 'tl_class' => 'w25'),
+            'sql'               => "varchar(50) NOT NULL default ''"
         ),
-        'size'          => array(
-            'inputType'     => 'select',
-            'exclude'       => true,
-            'search'        => true,
-            'filter'        => true,
-            'sorting'       => true,
-            'reference'     => &$GLOBALS['TL_LANG']['tl_dw_tanks']['sizes'],
-            'options'       => array('2','3','5','7','8','10','12','15','18','20','40','80'),
-            'eval'          => array('includeBlankOption' => true, 'tl_class' => 'w25'),
-            'sql'           => "varchar(20) NOT NULL default ''",
+        'size'              => array(
+            'inputType'         => 'select',
+            'exclude'           => true,
+            'search'            => true,
+            'filter'            => true,
+            'sorting'           => true,
+            'reference'         => &$GLOBALS['TL_LANG']['tl_dw_tanks']['sizes'],
+            'options'           => array('2','3','5','7','8','10','12','15','18','20','40','80'),
+            'eval'              => array('includeBlankOption' => true, 'tl_class' => 'w25'),
+            'sql'               => "varchar(20) NOT NULL default ''",
         ),
-        'lastCheckDate' => array
-        (
-            'inputType'     => 'text',
-            'sorting'       => true,
-            'flag'          => DataContainer::SORT_YEAR_DESC,
-            'eval'          => array('submitOnChange' => true, 'rgxp'=>'date', 'mandatory'=>false, 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
-            'sql' => "bigint(20) NULL"
+        'o2clean'           => array(
+            'exclude'           => true,
+            'inputType'         => 'checkbox',
+            'eval'              => array('submitOnChange' => true, 'tl_class' => 'w50'),
+            'sql'               => "char(1) NOT NULL default ''"
         ),
-        'nextCheckDate' => array
-        (
-            'inputType'     => 'text',
-            'sorting'       => true,
-            'flag'          => DataContainer::SORT_YEAR_DESC,
-            'eval'          => array('submitOnChange' => true,'rgxp'=>'date', 'doNotCopy'=>false, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
-            'sql'           => "bigint(20) NULL"
+        'lastCheckDate'     => array(
+            'inputType'         => 'text',
+            'sorting'           => true,
+            'flag'              => DataContainer::SORT_YEAR_DESC,
+            'eval'              => array('submitOnChange' => true, 'rgxp'=>'date', 'mandatory'=>false, 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
+            'sql'               => "bigint(20) NULL"
         ),
-        'member'        => array(
-            'inputType'     => 'select',
-            'exclude'       => true,
-            'search'        => true,
-            'filter'        => true,
-            'sorting'       => true,
-            'reference'     => &$GLOBALS['TL_LANG']['tl_dw_tanks'],
-            'foreignKey'    => 'tl_member.id',
-            'eval'          => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w33'),
-            'options_callback' => array('tl_dw_tanks', 'getMemberOptions'),
-            'sql'           => "varchar(255) NOT NULL default ''",
+        'nextCheckDate'     => array(
+            'inputType'         => 'text',
+            'sorting'           => true,
+            'flag'              => DataContainer::SORT_YEAR_DESC,
+            'eval'              => array('submitOnChange' => true,'rgxp'=>'date', 'doNotCopy'=>false, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
+            'sql'               => "bigint(20) NULL"
         ),
-        'addSubpalette' => array(
-            'exclude'       => true,
-            'inputType'     => 'checkbox',
-            'eval'          => array('submitOnChange' => true, 'tl_class' => 'w50'),
-            'sql'           => "char(1) NOT NULL default ''"
+        'member'            => array(
+            'inputType'         => 'select',
+            'exclude'           => true,
+            'search'            => true,
+            'filter'            => true,
+            'sorting'           => true,
+            'reference'         => &$GLOBALS['TL_LANG']['tl_dw_tanks'],
+            'foreignKey'        => 'tl_member.id',
+            'eval'              => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w33'),
+            'options_callback'  => array('tl_dw_tanks', 'getMemberOptions'),
+            'sql'               => "varchar(255) NOT NULL default ''",
         ),
-        'notes'         => array(
-            'inputType'     => 'textarea',
-            'exclude'       => true,
-            'search'        => false,
-            'filter'        => true,
-            'sorting'       => false,
-            'eval'          => array('rte' => 'tinyMCE', 'tl_class' => 'clr'),
-            'sql'           => 'text NULL'
+        'addSubpalette'     => array(
+            'exclude'           => true,
+            'inputType'         => 'checkbox',
+            'eval'              => array('submitOnChange' => true, 'tl_class' => 'w50'),
+            'sql'               => "char(1) NOT NULL default ''"
         ),
-        'published'     => array
-        (
-            'toggle'        => true,
-            'filter'        => true,
-            'flag'          => DataContainer::SORT_INITIAL_LETTER_DESC,
-            'inputType'     => 'checkbox',
-            'eval'          => array('doNotCopy'=>true, 'tl_class' => 'w50'),
-            'sql'           => array('type' => 'boolean', 'default' => false)
+        'notes'             => array(
+            'inputType'         => 'textarea',
+            'exclude'           => true,
+            'search'            => false,
+            'filter'            => true,
+            'sorting'           => false,
+            'eval'              => array('rte' => 'tinyMCE', 'tl_class' => 'clr'),
+            'sql'               => 'text NULL'
         ),
-        'start'         => array
-        (
-            'inputType'     => 'text',
-            'eval'          => array('rgxp'=>'datim', 'datepicker'=>true, 'tl_class'=>'w50 clr wizard'),
-            'sql'           => "varchar(10) NOT NULL default ''"
+        'published'         => array(
+            'toggle'            => true,
+            'filter'            => true,
+            'flag'              => DataContainer::SORT_INITIAL_LETTER_DESC,
+            'inputType'         => 'checkbox',
+            'eval'              => array('doNotCopy'=>true, 'tl_class' => 'w50'),
+            'sql'               => array('type' => 'boolean', 'default' => false)
         ),
-        'stop'          => array
-        (
-            'inputType'     => 'text',
-            'eval'          => array('rgxp'=>'datim', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
-            'sql'           => "varchar(10) NOT NULL default ''"
+        'start'             => array(
+            'inputType'         => 'text',
+            'eval'              => array('rgxp'=>'datim', 'datepicker'=>true, 'tl_class'=>'w50 clr wizard'),
+            'sql'               => "varchar(10) NOT NULL default ''"
+        ),
+        'stop'              => array(
+            'inputType'         => 'text',
+            'eval'              => array('rgxp'=>'datim', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
+            'sql'               => "varchar(10) NOT NULL default ''"
         )
     )
 );
@@ -286,13 +273,24 @@ class tl_dw_tanks extends Backend
         return $varValue;
     }
 
-    function formatCheckDates($row, $label) {
+    function formatCheckDates($row, $label)
+    {
+        $logger = System::getContainer()->get('monolog.logger.contao');
+
+        $members = $this->getMemberOptions(); // Add this line to get member options stucture
+        $memberName = isset($members[$row['member']]) ? $members[$row['member']] : 'N/A';
 
         $title = $row['title'] ?? '';
         $serialnumber = $row['serialNumber'] ?? '';
         $size = $row['size'] ?? '';
         $invoices = $this->listChildren($row);
         $lastTotal = $this->getLastInvoiceTotal($row);
+
+        if($row['o2clean'] == 1){
+            $o2CleanValue = 'ja';
+        } else {
+            $o2CleanValue = 'nein';
+        }
 
         $lastCheckDate = isset($row['lastCheckDate']) && is_numeric($row['lastCheckDate'])
             ? date('d.m.Y', $row['lastCheckDate'])
@@ -301,33 +299,44 @@ class tl_dw_tanks extends Backend
         $nextCheckDate = isset($row['nextCheckDate']) && is_numeric($row['nextCheckDate'])
             ? date('d.m.Y', $row['nextCheckDate'])
             : 'N/A';
+
+        $logger->info(
+            'Label-String: '. print_r($title, true) . ' - ' .print_r($serialnumber, true) . ' - ' .print_r($size .'L', true) . ' - ' .print_r($o2CleanValue, true) . ' - ' .print_r($lastCheckDate, true) . ' - ' .print_r($nextCheckDate, true) . ' - ' .print_r($memberName, true),
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+        );
         if($invoices == 1) {
-            return sprintf(' %s - %s - %s L - Letzter TÜV %s - Nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s]</span>',
+            return sprintf(' %s - %s - %s L %s - Letzter TÜV %s - Nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s]</span> - %s',
                 $title,
                 $serialnumber,
                 $size,
+                $o2CleanValue,
                 $lastCheckDate,
                 $nextCheckDate,
+                $memberName,
                 $invoices,
                 $lastTotal
             );
         }elseif ($invoices >= 2) {
-            return sprintf('%s - %s - %s L - Letzter TÜV %s - Nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s]</span>',
+            return sprintf('%s - %s - %s L %s - Letzter TÜV %s - Nächster TÜV %s %s %s %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s]</span>',
                 $title,
                 $serialnumber,
                 $size,
+                $o2CleanValue,
                 $lastCheckDate,
                 $nextCheckDate,
+                $memberName,
                 $invoices,
                 $lastTotal
             );
         } else {
-            return sprintf('%s - %s - %s L - Letzter TÜV %s - Nächster TÜV %s',
+            return sprintf('%s - %s - %s L %s - Letzter TÜV %s - Nächster TÜV %s %s',
                 $title,
                 $serialnumber,
                 $size,
+                $o2CleanValue,
                 $lastCheckDate,
-                $nextCheckDate
+                $nextCheckDate,
+                $memberName
             );
         }
     }
@@ -370,15 +379,6 @@ class tl_dw_tanks extends Backend
         return $options;
     }
 
-    public function getHeaderWithTotal($row)
-    {
-        // Holen Sie den Gesamtbetrag der Rechnungen für den aktuellen Member
-        $total = Database::getInstance()->prepare("SELECT SUM(priceTotal) as total FROM tl_dw_check_invoice WHERE member=?")->execute($row['member'])->total;
-
-        // Füge den Totalbetrag zum Gruppennamen hinzu
-        return $row['member'] . '<span style="color:#b3b3b3; padding-left:4px;"> (Gesamtbetrag: ' . $total . '€)</span>';
-    }
-
     public function getLastInvoiceTotal($arrRow)
     {
         $tankId = $arrRow['id'];
@@ -391,7 +391,8 @@ class tl_dw_tanks extends Backend
         return $lastInvoice;
     }
 
-    public function listChildren($arrRow) {
+    public function listChildren($arrRow)
+    {
         // Get the ID of the current tank
         $tankId = $arrRow['id'];
 

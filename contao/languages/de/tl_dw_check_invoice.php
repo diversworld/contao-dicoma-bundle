@@ -16,9 +16,9 @@ declare(strict_types=1);
 /**
  * Legends
  */
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tuv_legend'] = "TÜV-Termin Einstellungen";
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['vendor_legend'] = "Prüfunternehmen";
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['article_legend'] = "Preise für die TÜV-Prüfung";
+$GLOBALS['TL_LANG']['tl_dw_tanks']['title_legend'] = "Rechnungsdaten";
+$GLOBALS['TL_LANG']['tl_dw_tanks']['details_legend'] = "Details zur Rechnung";
+$GLOBALS['TL_LANG']['tl_dw_tanks']['publish_legend'] ="Veröffentlichen";
 
 /**
  * Fields
@@ -27,16 +27,21 @@ $GLOBALS['TL_LANG']['tl_dw_check_invoice']['addCheckInfo'] = ["Daten zum TÜV-Te
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['addVendorInfo'] = ["Prüfungsunternehmen", "Informationen zum Prüfungsunternehmen erfassen."];
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['addArticleInfo'] = ["Preisliste erstellen", "Preisliste für den TÜV-Termin erfassen"];
 
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['is_tuv_appointment'] = ["TÜV-Termin", "Dieser Event ein TÜV-Termin?"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['vendorName'] = ["Firma", "Firmenname des Prüfungsunternehmens"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['street'] = ["Straße", "Geben Sie die Straße ein."];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['postal'] = ["PLZ", "Geben Sie die PLZ ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['city'] = ["Ort", "Geben Sie den Ort ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['vendorEmail'] = ["E-Mail", "Geben Sie die E-Mail-Adresse ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['vendorPhone'] = ["Telefonnummer", "Geben Sie die Telefonnummer ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['vendorMobile'] = ["Mobilnnummer", "Geben Sie die Mobilnummer ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['checkArticles'] = ["TÜV-Preisliste", "Geben Sie die Preise für die Prüfungsartikel ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleName'] = ["Artikel", "Geben ie Artikelbezeichnung ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleNotes'] = ["Beschreibung", "Geben Sie eine Beschreibung ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'] = ["Preis netto", "Geben Sie den Nettopreis ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'] = ["Preis brutto", "Der Bruttopreis wird beim speichern berechnet."];
+$GLOBALS['TL_LANG']['tl_dw_tanks']['title'] = ["Rechnungstitel", "Geben Sie den Rechnungsnamen ein. Wird automatisch erstellt."];
+$GLOBALS['TL_LANG']['tl_dw_tanks']['alias'] = ["Alias", "Alias der Rechnung"];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['member'] = ["Mitglied", "Name des Eigentümers"];
+
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['invoiceArticles'] = ["Preisliste", "Geben Sie die Preise für die Prüfung ein."];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleName'] = ["Artikelname", "Geben Sie eine Artikelbezeichnung ein"];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleSize'] = ["Flaschengöße", "Geben Sie die Flaschengröße für den der Artikel gilt ein."];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleNotes'] = ["Beschreibung", "Geben Sie eine Beschreibung des Artikels ein"];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'] = ["Preis Netto", "Geben Sie den Nettopreis ein"];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'] = ["Preis Brutto", "Der Bruttopreis wird automatisch beim speichern berechnet. Gerundet auf 5 cent."];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['default'] = ["Defaultpreis", "Defaultpreise gelten für alle Flaschen größen gleich."];
+
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['priceTotal'] = ["Gesamtpreis", "Der gesamtpreis der rechnung wird automatisch berechnet."];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['notes'] = ["Bemerkungen", "Geben Sie eine Bemerkung ein"];
+
+$GLOBALS['TL_LANG']['tl_dw_tanks']['published'] = ["Veröffentlichen", "Den Datensatz veröffentlichen."];
+$GLOBALS['TL_LANG']['tl_dw_tanks']['start'] = ["Anzeigen ab", "Ab wann soll der Datensatz angezeigt werden."];
+$GLOBALS['TL_LANG']['tl_dw_tanks']['stop'] = ["Anzeigen bis", "Bis wann soll der Datensatz angezeigt werden."];
