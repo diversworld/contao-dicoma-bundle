@@ -80,7 +80,12 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
                 'href'          => 'act=toggle&amp;field=published',
                 'icon'          => 'visible.svg',
                 'showInHeader'  => true
-            )
+            ),
+            'operations' => array(
+                //'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tanks'],
+                'href' => 'do=check_collection&table=tl_dw_check_invoice',
+                'icon' => 'editor.svg'
+            ),
         ),
     ),
     'palettes'          => array(
