@@ -305,8 +305,9 @@ class tl_dw_tanks extends Backend
             'Label-String: '. print_r($title, true) . ' - ' .print_r($serialnumber, true) . ' - ' .print_r($size .'L', true) . ' - ' .print_r($o2CleanValue, true) . ' - ' .print_r($lastCheckDate, true) . ' - ' .print_r($nextCheckDate, true) . ' - ' .print_r($memberName, true),
             ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
         );
+
         if($invoices == 1) {
-            return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#dedede; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s€]</span>',
+            return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[ %s Rechnung ] [ letzte Rechnung: %s € ]</span>',
                 $title,
                 $serialnumber,
                 $size,
@@ -318,7 +319,7 @@ class tl_dw_tanks extends Backend
                 $lastTotal
             );
         }elseif ($invoices >= 2) {
-            return sprintf('%s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#dedede; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s€]</span>',
+            return sprintf('%s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s€]</span>',
                 $title,
                 $serialnumber,
                 $size,
