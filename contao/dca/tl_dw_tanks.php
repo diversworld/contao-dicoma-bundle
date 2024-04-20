@@ -306,7 +306,7 @@ class tl_dw_tanks extends Backend
             ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
         );
         if($invoices == 1) {
-            return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#dedede; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s]</span> - %s',
+            return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#dedede; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s]</span>',
                 $title,
                 $serialnumber,
                 $size,
