@@ -46,7 +46,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         ),
         'label'             => array(
             'fields'            => array('title', 'serialNumber', 'size', 'o2clean', 'lastCheckDate', 'nextCheckDate', 'member'),
-            'showColumns'       => true,
+            'showColumns'       => false,
             'format'            => '%s',
             'label_callback'    => array('tl_dw_tanks', 'formatCheckDates'),
         ),
@@ -162,6 +162,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         ),
         'o2clean'           => array(
             'exclude'           => true,
+            'filter'            => true,
             'inputType'         => 'checkbox',
             'eval'              => array('submitOnChange' => true, 'tl_class' => 'w50'),
             'sql'               => "char(1) NOT NULL default ''"
@@ -169,6 +170,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         'lastCheckDate'     => array(
             'inputType'         => 'text',
             'sorting'           => true,
+            'filter'            => true,
             'flag'              => DataContainer::SORT_YEAR_DESC,
             'eval'              => array('submitOnChange' => true, 'rgxp'=>'date', 'mandatory'=>false, 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
             'sql'               => "bigint(20) NULL"
@@ -176,6 +178,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         'nextCheckDate'     => array(
             'inputType'         => 'text',
             'sorting'           => true,
+            'filter'            => true,
             'flag'              => DataContainer::SORT_YEAR_DESC,
             'eval'              => array('submitOnChange' => true,'rgxp'=>'date', 'doNotCopy'=>false, 'datepicker'=>true, 'tl_class'=>'w33 wizard'),
             'sql'               => "bigint(20) NULL"
@@ -186,8 +189,6 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'search'            => true,
             'filter'            => true,
             'sorting'           => true,
-            'reference'         => &$GLOBALS['TL_LANG']['tl_dw_tanks'],
-            'foreignKey'        => 'tl_member.id',
             'eval'              => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w33'),
             'options_callback'  => array('tl_dw_tanks', 'getMemberOptions'),
             'sql'               => "varchar(255) NOT NULL default ''",
@@ -202,7 +203,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'inputType'         => 'textarea',
             'exclude'           => true,
             'search'            => false,
-            'filter'            => true,
+            'filter'            => false,
             'sorting'           => false,
             'eval'              => array('rte' => 'tinyMCE', 'tl_class' => 'clr'),
             'sql'               => 'text NULL'
@@ -305,38 +306,38 @@ class tl_dw_tanks extends Backend
             ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
         );
         if($invoices == 1) {
-            return sprintf(' %s - %s - %s L %s - Letzter TÜV %s - Nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s]</span> - %s',
+            return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#dedede; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s]</span> - %s',
                 $title,
                 $serialnumber,
                 $size,
                 $o2CleanValue,
+                $memberName,
                 $lastCheckDate,
                 $nextCheckDate,
-                $memberName,
                 $invoices,
                 $lastTotal
             );
         }elseif ($invoices >= 2) {
-            return sprintf('%s - %s - %s L %s - Letzter TÜV %s - Nächster TÜV %s %s %s %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s]</span>',
+            return sprintf('%s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#dedede; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s]</span>',
                 $title,
                 $serialnumber,
                 $size,
                 $o2CleanValue,
+                $memberName,
                 $lastCheckDate,
                 $nextCheckDate,
-                $memberName,
                 $invoices,
                 $lastTotal
             );
         } else {
-            return sprintf('%s - %s - %s L %s - Letzter TÜV %s - Nächster TÜV %s %s',
+            return sprintf('%s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s',
                 $title,
                 $serialnumber,
                 $size,
                 $o2CleanValue,
+                $memberName,
                 $lastCheckDate,
-                $nextCheckDate,
-                $memberName
+                $nextCheckDate
             );
         }
     }
