@@ -1,4 +1,4 @@
-<img alt="Diversworld" src="./docs/Diversworld-Wort-Logo.pngLogo-ws.png" width="250"/>
+<img alt="Diversworld" src="./docs/Diversworld-Wort-Logo.png" width="250"/>
 
 # Welcome to Dive Course Manager Bundle (DiCoMa)
 ### Verwaltung von Equipment und Tauchkursen für Tauchvereine und oder Tauchschulen
@@ -17,3 +17,5 @@ Im ersten Release gibt es eine verwaltung der Tauchflaschen und die organisation
 ### Releaseplanung
 - Release 2 wird dann die Verwaltung von Tauchkursen enthalten.
 - Im Release 3 ist dann die Verwaltung der Ausrüstung mit einem Leihprozess geplant.
+
+
