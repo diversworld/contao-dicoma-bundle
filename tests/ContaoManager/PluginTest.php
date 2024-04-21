@@ -19,6 +19,7 @@ use Contao\ManagerPlugin\Bundle\Parser\DelegatingParser;
 use Contao\TestCase\ContaoTestCase;
 use Diversworld\ContaoDicomaBundle\ContaoManager\Plugin;
 use Diversworld\ContaoDicomaBundle\DiversworldContaoDicomaBundle;
+use Contao\CalendarBundle\ContaoCalendarBundle;
 
 /**
  * @package Diversworld\ContaoDicomaBundle\Tests\ContaoManager
@@ -46,6 +47,6 @@ class PluginTest extends ContaoTestCase
         $this->assertCount(1, $bundles);
         $this->assertInstanceOf(BundleConfig::class, $bundles[0]);
         $this->assertSame(DiversworldContaoDicomaBundle::class, $bundles[0]->getName());
-        $this->assertSame([ContaoCoreBundle::class, Contao\CalendarBundle\ContaoCalendarBundle::class], $bundles[0]->getLoadAfter());
+        $this->assertSame([ContaoCoreBundle::class, ContaoCalendarBundle::class], $bundles[0]->getLoadAfter());
     }
 }
