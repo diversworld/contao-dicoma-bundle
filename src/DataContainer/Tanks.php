@@ -97,7 +97,7 @@ class Tanks
                 return $total + str_replace(',', '.', $article['articlePriceBrutto']);
             }, 0);
 
-            $totalPrice = number_format($totalPrice, 2, ',', '');
+            //$totalPrice = number_format($totalPrice, 2, ',', '');
 
             $stmt = $db->prepare(
                 "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, checkId, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");

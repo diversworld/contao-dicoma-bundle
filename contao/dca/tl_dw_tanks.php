@@ -348,7 +348,7 @@ class tl_dw_tanks extends Backend
         $result = $db->prepare("SELECT SUM(priceTotal) as total FROM tl_dw_check_invoice WHERE member = ?")
             ->execute($row['member']); // Ersetzen Sie 'member_id' mit dem tatsächlichen Feldnamen für die Mitglieds-ID
 
-        $lastTotal =  number_format($result->total, 2, ',', '.');
+        $lastTotal =  $result->total;
 
         return $group . ' (Rechnung: ' . $lastTotal . ' €)';
     }
