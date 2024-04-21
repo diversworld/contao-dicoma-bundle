@@ -192,7 +192,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
         (
             'inputType'     => 'text',
             'eval'          => array('tl_class'=>'w25 clr'),
-            'sql'           => "varchar(10) NOT NULL default ''"
+            'sql'           => "DECIMAL(10,2) NOT NULL default '0.00'"
         ),
         'notes'         => array(
             'inputType'     => 'textarea',
