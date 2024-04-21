@@ -162,7 +162,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleName'],
                             'inputType' => 'select',
                             'options'   => ['2','3','5','7','8','10','12','15','18','20','40','80'],
-                            'eval'      => ['includeBlankOption' => true, 'groupStyle' => 'width:40px']
+                            'eval'      => ['includeBlankOption' => true, 'groupStyle' => 'width:60px']
                         ],
                         'articleNotes'  => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleNotes'],
