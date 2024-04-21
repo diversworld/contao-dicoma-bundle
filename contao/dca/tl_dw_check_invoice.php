@@ -153,33 +153,33 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                     'editorTemplate' => 'multi_column_editor_backend_default',
                     'fields' => [
                         'articleName' => [
-                            'label' => &$GLOBALS['TL_LANG']['tl_calendar_events']['articleName'],
+                            'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleName'],
                             'inputType' => 'text',
                             'eval' => ['groupStyle' => 'width:300px']
                         ],
                         'articleSize' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articleName'],
+                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleName'],
                             'inputType' => 'select',
                             'options'   => ['2','3','5','7','8','10','12','15','18','20','40','80'],
                             'eval'      => ['includeBlankOption' => true, 'groupStyle' => 'width:300px']
                         ],
                         'articleNotes'  => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articleNotes'],
+                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleNotes'],
                             'inputType' => 'textarea',
                             'eval'      => ['groupStyle' => 'width:400px']
                         ],
                         'articlePriceNetto' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articlePriceNetto'],
+                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'],
                             'inputType' => 'text',
                             'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true]
                         ],
                         'articlePriceBrutto' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articlePriceBrutto'],
+                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'],
                             'inputType' => 'text',
                             'eval'      => ['groupStyle' => 'width:100px']
                         ],
                         'default' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['default'],
+                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['default'],
                             'inputType' => 'checkbox',
                             'eval'      => ['groupStyle' => 'width:40px']
                         ],
