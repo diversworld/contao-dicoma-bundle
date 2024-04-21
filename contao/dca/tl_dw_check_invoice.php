@@ -87,7 +87,8 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
     'palettes'          => array(
         '__selector__'      => array(),
         'default'           => '{title_legend},title,alias;
-                                {details_legend},member,invoiceArticles, priceTotal, notes;
+                                {details_legend},member,invoiceArticles, priceTotal;
+                                {notes_legend},notes;
                                 {publish_legend},published,start,stop;'
     ),
     'subpalettes'       => array(),
