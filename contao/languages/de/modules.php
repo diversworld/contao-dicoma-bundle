@@ -15,7 +15,9 @@ declare(strict_types=1);
 /**
  * Backend modules
  */
-$GLOBALS['TL_LANG']['MOD']['check_modules'] = 'Diversworld';
+
+$GLOBALS['TL_LANG']['MOD']['diversworld_modules'] = ['Tauchkurse', 'Verwalten von Tauchkursen'];
+$GLOBALS['TL_LANG']['MOD']['check_modules'] = ['Equipment', 'Verwalten von AUSRÜSTUNG'];
 $GLOBALS['TL_LANG']['MOD']['course_collection'] = ['Tauchkurse', 'Verwalten von Tauchkursen'];
 $GLOBALS['TL_LANG']['MOD']['check_collection'] = ['Tauchgeräte', 'Verwalten von Tauchgeräten'];
 

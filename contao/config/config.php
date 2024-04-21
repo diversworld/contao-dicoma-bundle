@@ -22,12 +22,12 @@ $GLOBALS['BE_MOD']['content']['calendar']['tables'][] = 'tl_dw_tanks';
 
 
 $GLOBALS['BE_MOD']['diversworld_modules'] = array(
- 'course_collection' => array(
+    'course_collection' => array(
        'tables' => array('tl_dw_courses','tl_dw_instructors')
-   ),
-   'check_collection' => array(
+    ),
+    'check_collection' => array(
        'tables' => array('tl_dw_tanks','tl_dw_check_invoice')
-   )
+    )
 );
 
 /**
