@@ -57,18 +57,8 @@ class CalendarEvents
     {
         $logger = System::getContainer()->get('monolog.logger.contao');
 
-        $logger->info(
-            'Berechnung: ID:'. print_r($dc->id, true),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-        );
-
         $id = $dc->id;
         $model = CalendarEventsModel::findById($id);
-
-        $logger->info(
-            'Vor Berechnung: '. print_r($model->checkArticles, true),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-        );
 
         if($model !== null) {
             $checkArticles = unserialize($model->checkArticles);
@@ -83,18 +73,6 @@ class CalendarEvents
                 return;
             }
 
-            if (is_array($checkArticles)) {
-                $logger->info(
-                    'checkArticles ist ein Array.',
-                    ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-                );
-            } else {
-                $logger->error(
-                    'checkArticles ist kein Array. Typ: ' . gettype($checkArticles),
-                    ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-                );
-            }
-
             // Iterieren Sie über jede Zeile in checkArticles
             foreach ($checkArticles as &$row) {
                 // Überprüfen Sie, ob das Feld 'articlePriceNetto' gesetzt ist
@@ -105,10 +83,7 @@ class CalendarEvents
 
                     // Setzen Sie das Feld 'articlePriceBrutto'
                     $row['articlePriceBrutto'] = number_format((float)$grossRoundedPrice, 2, '.', ',');
-                    $logger->info(
-                        'In if-Klausel, brutto Preis berechnet: ' . $row['articlePriceBrutto'],
-                        ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-                    );
+
                 }  else {
                     $logger->info(
                         'articlePriceNetto ist nicht gesetzt.',
@@ -119,11 +94,6 @@ class CalendarEvents
             }
 
             unset($row);
-
-            $logger->info(
-                'Nach Berechnung - ID:'. print_r($checkArticles, true). 'Nach Berechnung: '. print_r($checkArticles, true),
-                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-            );
 
             // Speichern Sie die Änderungen in der Datenbank
             Database::getInstance()->prepare("UPDATE tl_calendar_events SET checkArticles = ? WHERE id = ?")

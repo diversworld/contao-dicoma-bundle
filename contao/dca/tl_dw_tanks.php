@@ -344,6 +344,13 @@ class tl_dw_tanks extends Backend
 
     function formatGroupHeader($group, $mode, $field, $row)
     {
+        $logger = System::getContainer()->get('monolog.logger.contao');
+
+        $logger->info(
+            'Group header Tanks: '. print_r($group, true) . 'Field ' .print_r($field, true) . 'Row ' .print_r($row, true) . 'Mode ' .print_r($mode, true),
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+        );
+
         $db = Database::getInstance();
         $result = $db->prepare("SELECT SUM(priceTotal) as total FROM tl_dw_check_invoice WHERE member = ?")
             ->execute($row['member']); // Ersetzen Sie 'member_id' mit dem tatsächlichen Feldnamen für die Mitglieds-ID
