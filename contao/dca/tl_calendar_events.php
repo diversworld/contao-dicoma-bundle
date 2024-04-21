@@ -69,7 +69,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['checkArticles'] = [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articleName'],
                     'inputType' => 'select',
                     'options'   => ['2','3','5','7','8','10','12','15','18','20','40','80'],
-                    'eval'      => ['includeBlankOption' => true, 'groupStyle' => 'width:300px']
+                    'eval'      => ['includeBlankOption' => true, 'groupStyle' => 'width:40px']
                 ],
                 'articleNotes'  => [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articleNotes'],
