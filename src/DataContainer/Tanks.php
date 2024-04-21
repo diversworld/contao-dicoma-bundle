@@ -100,8 +100,8 @@ class Tanks
             $totalPrice = number_format($totalPrice, 2, ',', '');
 
             $stmt = $db->prepare(
-                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, 1, ?, ?)");
-            $stmt->execute($title, $alias, time(), $tankId, $member, $filteredArticles, $totalPrice);
+                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, checkId, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
+            $stmt->execute($title, $alias, time(), $tankId, $eventId, $member, $filteredArticles, $totalPrice);
 
             $logger->info(
                 'Invoice created successfully. Tank ID: '. print_r($tankId, true) . 'Datum ' .print_r($datum, true),

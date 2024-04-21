@@ -138,6 +138,13 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
             'options_callback' => array('tl_dw_check_invoice', 'getMemberOptions'),
             'sql'           => "varchar(255) NOT NULL default ''",
         ),
+        'checkId'           => [
+            'inputType'     => 'text',
+            'foreignKey'    => 'tl_dw_tanks.pid',
+            'eval'          => ['submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 clr'],
+            'sql'           => "int(10) unsigned NOT NULL default 0",
+            'relation'      => array('type'=>'hasOne', 'load'=>'lazy'),
+        ],
         'invoiceArticles' => array(
             'inputType' => 'multiColumnEditor',
             'eval'      => [

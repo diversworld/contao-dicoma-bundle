@@ -49,6 +49,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'showColumns'       => false,
             'format'            => '%s',
             'label_callback'    => array('tl_dw_tanks', 'formatCheckDates'),
+            'group_callback'    => array('tl_dw_tanks', 'formatGroupHeader'),
         ),
         'global_operations' => array(
             'all'               => array(
@@ -281,8 +282,6 @@ class tl_dw_tanks extends Backend
 
     function formatCheckDates($row, $label)
     {
-        $logger = System::getContainer()->get('monolog.logger.contao');
-
         $members = $this->getMemberOptions(); // Add this line to get member options stucture
         $memberName = isset($members[$row['member']]) ? $members[$row['member']] : 'N/A';
 
@@ -306,11 +305,6 @@ class tl_dw_tanks extends Backend
             ? date('d.m.Y', $row['nextCheckDate'])
             : 'N/A';
 
-        $logger->info(
-            'Label-String: '. print_r($title, true) . ' - ' .print_r($serialnumber, true) . ' - ' .print_r($size .'L', true) . ' - ' .print_r($o2CleanValue, true) . ' - ' .print_r($lastCheckDate, true) . ' - ' .print_r($nextCheckDate, true) . ' - ' .print_r($memberName, true),
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-        );
-
         if($invoices == 1) {
             return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[ %s Rechnung ] [ letzte Rechnung: %s € ]</span>',
                 $title,
@@ -324,7 +318,7 @@ class tl_dw_tanks extends Backend
                 $lastTotal
             );
         }elseif ($invoices >= 2) {
-            return sprintf('%s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s€]</span>',
+            return sprintf('%s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnungen] [letzte Rechnung: %s €]</span>',
                 $title,
                 $serialnumber,
                 $size,
@@ -346,6 +340,17 @@ class tl_dw_tanks extends Backend
                 $nextCheckDate
             );
         }
+    }
+
+    function formatGroupHeader($group, $mode, $field, $row)
+    {
+        $db = Database::getInstance();
+        $result = $db->prepare("SELECT SUM(priceTotal) as total FROM tl_dw_check_invoice WHERE member = ?")
+            ->execute($row['member']); // Ersetzen Sie 'member_id' mit dem tatsächlichen Feldnamen für die Mitglieds-ID
+
+        $lastTotal =  number_format($result->total, 2);
+
+        return $group . ' (Rechnung: ' . $lastTotal . ' €)';
     }
 
     public function setLastCheckDate($varValue, DataContainer $dc)
@@ -391,7 +396,7 @@ class tl_dw_tanks extends Backend
         $tankId = $arrRow['id'];
 
         $lastInvoice = Database::getInstance()
-            ->prepare("SELECT priceTotal AS total FROM tl_dw_check_invoice WHERE pid = ?")
+            ->prepare("SELECT priceTotal AS total FROM tl_dw_check_invoice WHERE pid = ? ORDER BY id DESC LIMIT 1")
             ->execute($tankId)
             ->fetchAssoc()['total'];
 
