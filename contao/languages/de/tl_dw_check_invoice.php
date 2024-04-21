@@ -18,6 +18,7 @@ declare(strict_types=1);
  */
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['title_legend'] = "Rechnungsdaten";
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['details_legend'] = "Details zur Rechnung";
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['notes_legend'] = "Bemerkungen zur Rechnung";
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['publish_legend'] ="Veröffentlichen";
 
 /**
