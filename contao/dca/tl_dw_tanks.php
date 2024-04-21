@@ -347,17 +347,22 @@ class tl_dw_tanks extends Backend
         $logger = System::getContainer()->get('monolog.logger.contao');
 
         $logger->info(
-            'Group header Tanks: '. print_r($group, true) . 'Field ' .print_r($field, true) . 'Row ' .print_r($row, true) . 'Mode ' .print_r($mode, true),
+            'Group header Tanks: '. print_r($group, true) . ' - Field ' .print_r($field, true) . ' - Row ' .print_r($row, true) . ' - Mode ' .print_r($mode, true),
             ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
         );
 
         $db = Database::getInstance();
-        $result = $db->prepare("SELECT SUM(priceTotal) as total FROM tl_dw_check_invoice WHERE member = ?")
-            ->execute($row['member']); // Ersetzen Sie 'member_id' mit dem tatsächlichen Feldnamen für die Mitglieds-ID
 
-        $lastTotal =  $result->total;
+        if ($field === 'member' || $field === 'title') { // Check if field is 'member' or 'title'
+            $db = Database::getInstance();
+            $result = $db->prepare("SELECT SUM(priceTotal) as total FROM tl_dw_check_invoice WHERE $field = ?")
+                ->execute($row[$field]);
 
-        return $group . ' (Rechnung: ' . $lastTotal . ' €)';
+            $lastTotal =  $result->total;
+            return $group . ' (Rechnung: ' . $lastTotal . ' €)';
+        }
+
+        return $group;
     }
 
     public function setLastCheckDate($varValue, DataContainer $dc)
