@@ -46,7 +46,6 @@ class PluginTest extends ContaoTestCase
         $this->assertCount(1, $bundles);
         $this->assertInstanceOf(BundleConfig::class, $bundles[0]);
         $this->assertSame(DiversworldContaoDicomaBundle::class, $bundles[0]->getName());
-        $this->assertSame([ContaoCoreBundle::class], $bundles[0]->getLoadAfter());
+        $this->assertSame([ContaoCoreBundle::class, ContaoCalendarBundle::class], $bundles[0]->getLoadAfter());
     }
-
 }
