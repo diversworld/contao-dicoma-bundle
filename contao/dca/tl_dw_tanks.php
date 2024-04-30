@@ -26,14 +26,19 @@ use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
     'config'            => array(
         'dataContainer'     => DC_Table::class,
-        'ptable'            => 'tl_calendar_events',
+        //'ptable'            => 'tl_calendar_events',
+        'ctable'            => array('tl_dw_check_invoice'),
         'enableVersioning'  => true,
         'onsubmit_callback' => [],
         'onload_callback'   => array('tl_dw_tanks', 'filterTanksByEventId'),
         'ondelete_callback' => [],
         'sql'               => array(
             'keys'          => array(
-                'id'        => 'primary'
+                'id'        => 'primary',
+                'title' => 'index',
+                'alias' => 'index',
+                'serialNumber' => 'index',
+                'pid,published,start,stop' => 'index'
             )
         ),
     ),
@@ -59,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             )
         ),
         'operations'        => array(
-            'edit'              => array(
+            /*'edit'              => array(
                 'href'          => 'act=edit',
                 'icon'          => 'edit.svg'
             ),
@@ -83,10 +88,21 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
                 'showInHeader'  => true
             ),
             'operations' => array(
-                //'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tanks'],
+                'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tanks'],
                 'href' => 'do=check_collection&table=tl_dw_check_invoice',
                 'icon' => 'editor.svg'
+            ),*/
+            'edit',
+            'copy',
+            'delete',
+            'toggle' => array
+            (
+                'href'                => 'act=toggle&amp;field=published',
+                'icon'                => 'visible.svg',
+                'showInHeader'        => true
             ),
+            'show',
+            'children',
         ),
     ),
     'palettes'          => array(

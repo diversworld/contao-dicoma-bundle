@@ -34,7 +34,7 @@ $GLOBALS['TL_LANG']['tl_dw_check_invoice']['member'] = ["Mitglied", "Name des Ei
 
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['invoiceArticles'] = ["Preisliste", "Geben Sie die Preise für die Prüfung ein."];
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleName'] = ["Artikelname", "Geben Sie eine Artikelbezeichnung ein"];
-$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleSize'] = ["Flaschengöße", "Geben Sie die Flaschengröße für den der Artikel gilt ein."];
+$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleSize'] = ["Volumen", "Geben Sie die Flaschengröße für den der Artikel gilt ein."];
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['articleNotes'] = ["Beschreibung", "Geben Sie eine Beschreibung des Artikels ein"];
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'] = ["Preis Netto", "Geben Sie den Nettopreis ein"];
 $GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'] = ["Preis Brutto", "Der Bruttopreis wird automatisch beim speichern berechnet. Gerundet auf 5 cent."];

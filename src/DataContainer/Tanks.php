@@ -92,6 +92,13 @@ class Tanks
                 return $article['articleSize'] == $size || $article['default'] == '1';
             });
 
+            $filteredArticles = array_values($filteredArticles);
+
+            $logger->info(
+                'Filtered Articles: '. print_r($filteredArticles, true),
+                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+            );
+
             // Calculate total price
             $totalPrice = array_reduce($filteredArticles, function ($total, $article) {
                 return $total + str_replace(',', '.', $article['articlePriceBrutto']);
