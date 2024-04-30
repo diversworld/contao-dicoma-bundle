@@ -80,7 +80,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['checkArticles'] = [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articlePriceNetto'],
                     'inputType' => 'text',
                     'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true],
-                    'save_callback' => [CalendarEvents::class, 'calculateGross'],
+                    'save_callback' => [CalendarEvents::class, 'calculateAllGrossPrices'],
                 ],
                 'articlePriceBrutto' => [
                     'label'     => &$GLOBALS['TL_LANG']['tl_calendar_events']['articlePriceBrutto'],

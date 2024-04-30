@@ -19,6 +19,7 @@ use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
+use Diversworld\ContaoDicomaBundle\DataContainer\CheckInvoice;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 
 /**
@@ -171,7 +172,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'],
                             'inputType' => 'text',
                             'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true],
-                            'save_callback' => [CalendarEvents::class, 'calculateGross'],
+                            'save_callback' => [CheckInvoice::class, 'calculateAllGrossPrices'],
                         ],
                         'articlePriceBrutto' => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'],
