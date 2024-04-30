@@ -73,7 +73,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
         '__selector__'      => array('addArticleInfo'),
         'default'           => '{title_legend},title,alias,someField;
                                 {details_legend},member,checkId;
-                                {article_legend},addArticleInfo,priceTotal;
+                                {article_legend},invoiceArticles,priceTotal;
                                 {notes_legend},,notes;
                                 {publish_legend},published,start,stop;'
     ),
@@ -127,7 +127,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
         'checkId'           => [
             'inputType'     => 'text',
             'foreignKey'    => 'tl_dw_tanks.pid',
-            'eval'          => ['submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 clr'],
+            'eval'          => ['submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 '],
             'sql'           => "int(10) unsigned NOT NULL default 0",
         ],
         'addArticleInfo' => [

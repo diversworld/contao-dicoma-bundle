@@ -10,6 +10,7 @@
  * @link https://github.com/diversworld/contao-dicoma-bundle
  */
 
+use Diversworld\ContaoDicomaBundle\Model\CheckInvoiceModel;
 use Diversworld\ContaoDicomaBundle\Model\TanksModel;
 use Diversworld\ContaoDicomaBundle\Model\CoursesModel;
 
@@ -35,4 +36,5 @@ $GLOBALS['BE_MOD']['diversworld_modules'] = array(
  */
 $GLOBALS['TL_MODELS']['tl_dw_courses'] = CoursesModel::class;
 $GLOBALS['TL_MODELS']['tl_dw_tanks']  = TanksModel::class;
+$GLOBALS['TL_MODELS']['tl_dw_tanks']  = CheckInvoiceModel::class;
 
