@@ -22,7 +22,7 @@ PaletteManipulator::create()
 
 // Fields
 $GLOBALS['TL_DCA']['tl_calendar']['fields']['tankChecks'] = [
-    'eval'      => ['tl_class' => 'clr m12'],
+    'eval'      => ['tl_class' => 'clr w50'],
     'exclude'   => true,
     'filter'    => true,
     'inputType' => 'checkbox',

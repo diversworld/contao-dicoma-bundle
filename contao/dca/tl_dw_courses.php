@@ -17,7 +17,6 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
-use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
 use Diversworld\ContaoDicomaBundle\DataContainer\Courses;
 
 /**
@@ -57,45 +56,24 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             )
         ),
         'operations'        => array(
-            'edit'   => array(
-                'href'          => 'act=edit',
-                'icon'          => 'edit.svg'
-            ),
+            'edit',
             'children',
-            'copy'   => array(
-                'href'          => 'act=copy',
-                'icon'          => 'copy.svg'
-            ),
-            'delete' => array(
-                'href'          => 'act=delete',
-                'icon'          => 'delete.svg',
-                'attributes'    => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"'
-            ),
-            'show'   => array(
-                'href'          => 'act=show',
-                'icon'          => 'show.svg',
-                'attributes'    => 'style="margin-right:3px"'
-            ),
-            'toggle' => array
-            (
-                'href'          => 'act=toggle&amp;field=published',
-                'icon'          => 'visible.svg',
-                'showInHeader'  => true
-            )
+            'copy',
+            'delete',
+            'show',
+            'toggle'
         )
     ),
     'palettes'    => array(
-        '__selector__' => array('addImage', 'overwriteMeta','addArticleList'),
+        '__selector__' => array('addImage', 'overwriteMeta'),
         'default'      => '{first_legend},title,alias,category;
                            {details_section},description,requirements;
                            {image_legend},addImage;
-                           {list_legend},addArticleList;
                            {publish_legend},published,start,stop'
     ),
     'subpalettes' => array(
         'addImage'      => 'singleSRC,fullsize,size,floating,overwriteMeta',
-        'overwriteMeta' => 'alt,imageTitle,imageUrl,caption',
-        'addArticleList' => 'articleList',
+        'overwriteMeta' => 'alt,imageTitle,imageUrl,caption'
     ),
     'fields'      => array(
         'id'             => array(
@@ -154,53 +132,6 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'eval'          => array('submitOnChange'=>true),
             'sql'           => array('type' => 'boolean', 'default' => false)
         ),
-        'articleList'  => [
-            'inputType' => 'multiColumnEditor',
-            'tl_class'  => 'compact',
-            'eval'      => [
-                'sortable' => true,
-                'tl_class'  => 'compact',
-                'multiColumnEditor' => [
-                    'skipCopyValuesOnAdd' => false,
-                    'editorTemplate' => 'multi_column_editor_backend_default',
-                    'fields' => [
-                        'articleName' => [
-                            'label' => &$GLOBALS['TL_LANG']['tl_dw_courses']['articleName'],
-                            'inputType' => 'text',
-                            'eval' => ['groupStyle' => 'width:300px']
-                        ],
-                        'articleSize' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['articleSize'],
-                            'inputType' => 'select',
-                            'options'   => ['2','3','5','7','8','10','12','15','18','20','40','80'],
-                            'eval'      => ['includeBlankOption' => true, 'groupStyle' => 'width:60px']
-                        ],
-                        'articleNotes'  => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['articleNotes'],
-                            'inputType' => 'textarea',
-                            'eval'      => ['groupStyle' => 'width:400px']
-                        ],
-                        'articlePriceNetto' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['articlePriceNetto'],
-                            'inputType' => 'text',
-                            'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true],
-                            'save_callback' => [CalendarEvents::class, 'calculateAllGrossPrices'],
-                        ],
-                        'articlePriceBrutto' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['articlePriceBrutto'],
-                            'inputType' => 'text',
-                            'eval'      => ['groupStyle' => 'width:100px']
-                        ],
-                        'default' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['default'],
-                            'inputType' => 'checkbox',
-                            'eval'      => ['groupStyle' => 'width:40px']
-                        ],
-                    ]
-                ]
-            ],
-            'sql'       => "blob NULL"
-        ],
         'category'    => array(
             'inputType'     => 'select',
             'exclude'       => true,
@@ -211,7 +142,6 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'options'       => array('basic', 'specialty', 'professional'),
             'eval'          => array('includeBlankOption' => true, 'tl_class' => 'w50'),
             'sql'           => "varchar(255) NOT NULL default ''",
-            //'relation'  => array('type' => 'hasOne', 'load' => 'lazy')
         ),
         'addImage' => array
         (
@@ -300,11 +230,8 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'sorting'       => true,
             'reference'     => &$GLOBALS['TL_LANG']['tl_dw_courses'],
             'options'       => array('firstoption', 'secondoption'),
-            //'foreignKey'            => 'tl_user.name',
-            //'options_callback'      => array('CLASS', 'METHOD'),
             'eval'          => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w50'),
             'sql'           => "varchar(255) NOT NULL default ''",
-            //'relation'  => array('type' => 'hasOne', 'load' => 'lazy')
         ),
         'remarks'  => array(
             'inputType'     => 'textarea',

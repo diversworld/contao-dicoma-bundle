@@ -67,12 +67,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'edit',
             'copy',
             'delete',
-            'toggle' => array
-            (
-                'href'                => 'act=toggle&amp;field=published',
-                'icon'                => 'visible.svg',
-                'showInHeader'        => true
-            ),
+            'toggle',
             'show',
             'children'=> array(
                 'label' => &$GLOBALS['TL_LANG']['tl_dw_tanks']['tanks'],
