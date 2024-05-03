@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             ),
             'show',
             'children'=> array(
-                'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tanks'],
+                'label' => &$GLOBALS['TL_LANG']['tl_dw_tanks']['tanks'],
                 'href' => 'do=check_collection&table=tl_dw_check_invoice',
                 'icon' => 'editor.svg'
             ),
