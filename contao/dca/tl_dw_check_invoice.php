@@ -228,7 +228,7 @@ class tl_dw_check_invoice extends Backend
      *
      * @throws Exception
      */
-    public function generateAlias(mixed $varValue, DataContainer $dc): mixed
+    public function generateAlias(mixed $varValue, DataContainer $dc)
     {
         $aliasExists = static function (string $alias) use ($dc): bool {
             $result = Database::getInstance()
