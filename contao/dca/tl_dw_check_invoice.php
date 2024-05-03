@@ -48,8 +48,8 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
             'panelLayout'   => 'filter;sort,search,limit'
         ),
         'label'             => array(
-            'fields' => array('title','alias','published'),
-            'format' => '%s',
+            'fields' => array('title','member','checkId','priceTotal'),
+            'format' => '%s - Summe: %s€',
         ),
         'global_operations' => array(
             'all' => array(
@@ -88,7 +88,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
     ),
     'palettes'          => array(
         '__selector__'      => array('addArticleInfo'),
-        'default'           => '{title_legend},title,alias,pid;
+        'default'           => '{title_legend},title,alias;
                                 {details_legend},member,checkId;
                                 {article_legend},invoiceArticles,priceTotal;
                                 {notes_legend},notes;
