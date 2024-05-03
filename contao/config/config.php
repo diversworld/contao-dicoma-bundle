@@ -34,7 +34,7 @@ $GLOBALS['BE_MOD']['diversworld_modules'] = array(
 /**
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_dw_courses'] = CoursesModel::class;
-$GLOBALS['TL_MODELS']['tl_dw_tanks']  = TanksModel::class;
-$GLOBALS['TL_MODELS']['tl_dw_tanks']  = CheckInvoiceModel::class;
+$GLOBALS['TL_MODELS']['tl_dw_courses']          = CoursesModel::class;
+$GLOBALS['TL_MODELS']['tl_dw_tanks']            = TanksModel::class;
+$GLOBALS['TL_MODELS']['tl_dw_check_invoice']    = CheckInvoiceModel::class;
 
