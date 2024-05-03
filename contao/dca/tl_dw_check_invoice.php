@@ -13,13 +13,11 @@ declare(strict_types=1);
  * @link https://github.com/diversworld/contao-dicoma-bundle
  */
 use Contao\Backend;
-use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
-use Diversworld\ContaoDicomaBundle\DataContainer\CheckInvoice;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 
 /**
@@ -249,7 +247,7 @@ class tl_dw_check_invoice extends Backend
      *
      * @throws Exception
      */
-    public function generateAlias($varValue, DataContainer $dc)
+    public function generateAlias(mixed $varValue, DataContainer $dc): mixed
     {
         $aliasExists = static function (string $alias) use ($dc): bool {
             $result = Database::getInstance()
@@ -275,7 +273,7 @@ class tl_dw_check_invoice extends Backend
         return $varValue;
     }
 
-    public function getMemberOptions()
+    public function getMemberOptions(): array
     {
         $members = Database::getInstance()->execute("SELECT id, CONCAT(firstname, ' ', lastname) as name FROM tl_member")->fetchAllAssoc();
         $options = array();
@@ -287,26 +285,4 @@ class tl_dw_check_invoice extends Backend
 
         return $options;
     }
-
-    /*
-    public function getCheckArticlesOptions(DataContainer $dc)
-    {
-        // Zugriff auf PID des aktuellen Datensatzes
-        $tankId = $dc->activeRecord->pid;
-
-        $tankPid = Database::getInstance()->prepare("SELECT pid FROM tl_dw_tanks WHERE id=?")->execute($tankId)->fetchAssoc();
-
-        // Zugriff auf das 'checkArticles' Feld des Events
-        $eventRecord = Database::getInstance()->prepare("SELECT checkArticles FROM tl_calendar_events WHERE id=?")->execute($tankPid['pid'])->fetchAssoc();
-        $checkArticles = unserialize($eventRecord['checkArticles']);
-
-        // Baue die Optionen für das 'invoiceArticles' Feld auf
-        $options = array();
-        foreach($checkArticles as $key => $value)
-        {
-            $options[$key] = $value;
-        }
-
-        return $options;
-    }*/
 }
