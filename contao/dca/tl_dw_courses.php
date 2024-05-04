@@ -76,13 +76,13 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
         'overwriteMeta' => 'alt,imageTitle,imageUrl,caption'
     ),
     'fields'      => array(
-        'id'             => array(
-            'sql' => "int(10) unsigned NOT NULL auto_increment"
+        'id'        => array(
+            'sql'       => "int(10) unsigned NOT NULL auto_increment"
         ),
-        'tstamp'         => array(
-            'sql' => "int(10) unsigned NOT NULL default '0'"
+        'tstamp'        => array(
+            'sql'       => "int(10) unsigned NOT NULL default '0'"
         ),
-        'title'          => array(
+        'title'     => array(
             'inputType' => 'text',
             'exclude'   => true,
             'search'    => true,
@@ -92,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'eval'      => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'),
             'sql'       => "varchar(255) NOT NULL default ''"
         ),
-        'alias' => array
+        'alias'     => array
         (
             'search'    => true,
             'inputType' => 'text',
@@ -103,13 +103,13 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             ),
             'sql'       => "varchar(255) BINARY NOT NULL default ''"
         ),
-        'pid'           => [
-            'inputType'     => 'text',
-            'foreignKey'    => 'tl_dw_tanks.title',
-            'eval'          => ['submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 clr'],
-            'sql'           => "int(10) unsigned NOT NULL default 0",
+        'pid'       => [
+            'inputType' => 'text',
+            'foreignKey'=> 'tl_dw_tanks.title',
+            'eval'      => ['submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 clr'],
+            'sql'       => "int(10) unsigned NOT NULL default 0",
         ],
-        'description'  => array(
+        'description' => array(
             'inputType' => 'textarea',
             'exclude'   => true,
             'search'    => true,
@@ -127,64 +127,64 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'eval'      => array('rte' => 'tinyMCE', 'tl_class' => 'clr'),
             'sql'       => 'text NULL'
         ),
-        'addArticleList'     => array(
-            'inputType'     => 'checkbox',
-            'eval'          => array('submitOnChange'=>true),
-            'sql'           => array('type' => 'boolean', 'default' => false)
+        'addArticleList'=> array(
+            'inputType' => 'checkbox',
+            'eval'      => array('submitOnChange'=>true),
+            'sql'       => array('type' => 'boolean', 'default' => false)
         ),
         'category'    => array(
-            'inputType'     => 'select',
-            'exclude'       => true,
-            'search'        => true,
-            'filter'        => true,
-            'sorting'       => true,
-            'reference'     => &$GLOBALS['TL_LANG']['tl_dw_courses'],
-            'options'       => array('basic', 'specialty', 'professional'),
-            'eval'          => array('includeBlankOption' => true, 'tl_class' => 'w50'),
-            'sql'           => "varchar(255) NOT NULL default ''",
+            'inputType' => 'select',
+            'exclude'   => true,
+            'search'    => true,
+            'filter'    => true,
+            'sorting'   => true,
+            'reference' => &$GLOBALS['TL_LANG']['tl_dw_courses'],
+            'options'   => array('basic', 'specialty', 'professional'),
+            'eval'      => array('includeBlankOption' => true, 'tl_class' => 'w50'),
+            'sql'       => "varchar(255) NOT NULL default ''",
         ),
         'addImage' => array
         (
-            'inputType'     => 'checkbox',
-            'eval'          => array('submitOnChange'=>true),
-            'sql'           => array('type' => 'boolean', 'default' => false)
+            'inputType' => 'checkbox',
+            'eval'      => array('submitOnChange'=>true),
+            'sql'       => array('type' => 'boolean', 'default' => false)
         ),
         'overwriteMeta' => array
         (
-            'label'         => &$GLOBALS['TL_LANG']['tl_content']['overwriteMeta'],
-            'inputType'     => 'checkbox',
-            'eval'          => array('submitOnChange'=>true, 'tl_class'=>'w50 clr'),
-            'sql'           => array('type' => 'boolean', 'default' => false)
+            'label'     => &$GLOBALS['TL_LANG']['tl_content']['overwriteMeta'],
+            'inputType' => 'checkbox',
+            'eval'      => array('submitOnChange'=>true, 'tl_class'=>'w50 clr'),
+            'sql'       => array('type' => 'boolean', 'default' => false)
         ),
         'singleSRC' => array
         (
-            'label'         => &$GLOBALS['TL_LANG']['tl_content']['singleSRC'],
-            'inputType'     => 'fileTree',
-            'eval'          => array('filesOnly'=>true, 'fieldType'=>'radio', 'extensions'=>'%contao.image.valid_extensions%', 'mandatory'=>true),
-            'sql'           => "binary(16) NULL"
+            'label'     => &$GLOBALS['TL_LANG']['tl_content']['singleSRC'],
+            'inputType' => 'fileTree',
+            'eval'      => array('filesOnly'=>true, 'fieldType'=>'radio', 'extensions'=>'%contao.image.valid_extensions%', 'mandatory'=>true),
+            'sql'       => "binary(16) NULL"
         ),
         'alt' => array
         (
-            'label'         => &$GLOBALS['TL_LANG']['tl_content']['alt'],
-            'search'        => true,
-            'inputType'     => 'text',
-            'eval'          => array('maxlength'=>255, 'tl_class'=>'w50'),
-            'sql'           => "varchar(255) NOT NULL default ''"
+            'label'     => &$GLOBALS['TL_LANG']['tl_content']['alt'],
+            'search'    => true,
+            'inputType' => 'text',
+            'eval'      => array('maxlength'=>255, 'tl_class'=>'w50'),
+            'sql'       => "varchar(255) NOT NULL default ''"
         ),
         'imageTitle' => array
         (
-            'label'         => &$GLOBALS['TL_LANG']['tl_content']['imageTitle'],
-            'search'        => true,
-            'inputType'     => 'text',
-            'eval'          => array('maxlength'=>255, 'tl_class'=>'w50'),
-            'sql'           => "varchar(255) NOT NULL default ''"
+            'label'     => &$GLOBALS['TL_LANG']['tl_content']['imageTitle'],
+            'search'    => true,
+            'inputType' => 'text',
+            'eval'      => array('maxlength'=>255, 'tl_class'=>'w50'),
+            'sql'       => "varchar(255) NOT NULL default ''"
         ),
         'size' => array
         (
-            'label'         => &$GLOBALS['TL_LANG']['MSC']['imgSize'],
-            'inputType'     => 'imageSize',
-            'reference'     => &$GLOBALS['TL_LANG']['MSC'],
-            'eval'          => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50 clr'),
+            'label'     => &$GLOBALS['TL_LANG']['MSC']['imgSize'],
+            'inputType' => 'imageSize',
+            'reference' => &$GLOBALS['TL_LANG']['MSC'],
+            'eval'      => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50 clr'),
             'options_callback' => static function () {
                 return System::getContainer()->get('contao.image.sizes')->getOptionsForUser(BackendUser::getInstance());
             },

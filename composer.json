@@ -1,6 +1,6 @@
 {
     "name": "diversworld/contao-dicoma-bundle",
-    "version": "1.0.10",
+    "version": "1.0.14",
     "description": "Dive Course Manager - Verwaltung von Equipment und Tauchkursen für Tauchvereine und oder Tauchschulen",
     "keywords": [
         "contao",
@@ -9,7 +9,7 @@
         "diveclub",
         "diveshop"
     ],
-    "type": "contao-bundle",
+    "type":"contao-bundle",
     "license": "GPL-3.0-or-later",
     "authors": [
         {
