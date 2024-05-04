@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 
 /*
@@ -18,6 +17,7 @@ use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
+use Diversworld\ContaoDicomaBundle\DataContainer\CheckInvoice;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 
 /**
@@ -41,13 +41,13 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
     'list'        => array(
         'sorting'           => array(
             'mode'          => DataContainer::MODE_SORTABLE,
-            'fields'        => array('title','alias','published'),
+            'fields'        => array('title','alias','member','published'),
             'flag'          => DataContainer::SORT_ASC,
             'panelLayout'   => 'filter;sort,search,limit'
         ),
         'label'             => array(
-            'fields' => array('title','member','checkId','priceTotal'),
-            'format' => '%s - Summe: %s€',
+            'fields' => array('title','priceTotal','member','checkId'),
+            'format' => '%s - Summe: %s€ %s %s',
         ),
         'global_operations' => array(
             'all' => array(
@@ -153,7 +153,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'],
                             'inputType' => 'text',
                             'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true],
-                            'save_callback' => [CalendarEvents::class, 'calculateAllGrossPrices'],
+                            'save_callback' => [CheckInvoice::class, 'calculateAllGrossPrices'],
                         ],
                         'articlePriceBrutto' => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'],

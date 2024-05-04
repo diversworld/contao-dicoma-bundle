@@ -21,10 +21,7 @@ use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Date;
-use Contao\Image;
-use Contao\Message;
 use Contao\System;
-use Diversworld\ContaoDicomaBundle\Model\CalendarEventsCheckModel;
 use Diversworld\ContaoDicomaBundle\Model\TanksModel;
 
 class CalendarEvents

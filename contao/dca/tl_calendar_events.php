@@ -31,8 +31,6 @@ PaletteManipulator::create()
     ->addLegend('vendor_legend', 'tuv_legend', PaletteManipulator::POSITION_AFTER)
     ->addLegend('article_legend', 'vendor_legend', PaletteManipulator::POSITION_AFTER)
     ->addField(['addCheckInfo'], 'tuv_legend', PaletteManipulator::POSITION_APPEND)
-//    ->addField(['addVendorInfo'], 'vendor_legend', PaletteManipulator::POSITION_APPEND)
-//    ->addField(['addArticleInfo'], 'article_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_calendar_events');
 
 // Selector
