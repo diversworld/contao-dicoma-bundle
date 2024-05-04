@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of DiCoMa.
  *
- * (c) Diversworld 2024 <eckhard@diversworld.eu>
+ * (c) DiversWorld 2024 <eckhard@diversworld.eu>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -22,7 +22,7 @@ use Diversworld\ContaoDicomaBundle\Model\CheckInvoiceModel;
 
 class CheckInvoice
 {
-    public function calculateAllGrossPrices(DataContainer $dc)
+    public function calculateAllGrossPrices(DataContainer $dc): void
     {
         $logger = System::getContainer()->get('monolog.logger.contao');
 
@@ -51,7 +51,7 @@ class CheckInvoice
                     $grossRoundedPrice = ceil($grossPrice / 0.05) * 0.05;
 
                     // Setzen Sie das Feld 'articlePriceBrutto'
-                    $row['articlePriceBrutto'] = number_format((float)$grossRoundedPrice, 2, '.', ',');
+                    $row['articlePriceBrutto'] = number_format($grossRoundedPrice, 2);
 
                 }  else {
                     $logger->info(

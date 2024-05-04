@@ -18,5 +18,5 @@ use Contao\Model;
 
 class CalendarEventsCheckModel extends Model
 {
-    protected static $strTable = 'tl_dw_tanks';
+    protected static $strTable = 'tl_calendar_events';
 }

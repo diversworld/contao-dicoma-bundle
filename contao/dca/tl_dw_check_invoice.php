@@ -16,7 +16,6 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
-use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
 use Diversworld\ContaoDicomaBundle\DataContainer\CheckInvoice;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 

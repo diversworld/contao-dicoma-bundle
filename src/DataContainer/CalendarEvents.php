@@ -23,13 +23,14 @@ use Contao\DataContainer;
 use Contao\Date;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\Model\TanksModel;
+use tl_calendar_events;
 
 class CalendarEvents
 {
-    /**
+    /*
      * @param array $arrRow
      */
-    public function listTanks($arrRow): string
+    public function listTanks(array $arrRow): string
     {
         if ('1' === $arrRow['addCheckInfo']) {
             $countTanks = TanksModel::countBy('pid', $arrRow['id']);
@@ -47,10 +48,10 @@ class CalendarEvents
             return '<div class="tl_content_left">'.$arrRow['title'].' <span style="color:#999;padding-left:3px">['.$date.']</span><span style="color:#999;padding-left:3px">['.$GLOBALS['TL_LANG']['MSC']['tanks'].': '.$countTanks.'x]</span></div>';
         }
 
-        return (new \tl_calendar_events())->listEvents($arrRow);
+        return (new tl_calendar_events())->listEvents($arrRow);
     }
 
-    public function calculateAllGrossPrices(DataContainer $dc)
+    public function calculateAllGrossPrices(DataContainer $dc): void
     {
         $logger = System::getContainer()->get('monolog.logger.contao');
 
@@ -80,15 +81,13 @@ class CalendarEvents
                     $grossRoundedPrice = ceil($grossPrice / 0.05) * 0.05;
 
                     // Setzen Sie das Feld 'articlePriceBrutto'
-                    $row['articlePriceBrutto'] = number_format((float)$grossRoundedPrice, 2, '.', ',');
-
+                    $row['articlePriceBrutto'] = number_format($grossRoundedPrice, 2);
                 }  else {
                     $logger->info(
                         'articlePriceNetto ist nicht gesetzt.',
                         ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
                     );
                 }
-
             }
 
             unset($row);

@@ -18,6 +18,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment as TwigEnvironment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 #[Route('/my_custom', name: 'diversworld_contao_dicoma_my_custom', defaults: ['_scope' => 'frontend', '_token_check' => true])]
 class MyCustomController extends AbstractController
@@ -29,6 +32,11 @@ class MyCustomController extends AbstractController
         $this->twig = $twig;
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
     public function __invoke(): Response
     {
         $animals = [
@@ -49,7 +57,7 @@ class MyCustomController extends AbstractController
         ];
 
         return new Response($this->twig->render(
-            '@DiversworldContaoDicoma/MyCustom/my_custom.html.twig',
+            'DiversworldContaoDicoma/MyCustom/my_custom.html.twig',
             [
                 'animals' => $animals,
             ]
