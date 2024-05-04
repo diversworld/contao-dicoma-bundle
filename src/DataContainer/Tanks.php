@@ -105,7 +105,7 @@ class Tanks
             //$totalPrice = number_format($totalPrice, 2, ',', '');
 
             $stmt = $db->prepare(
-                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
+                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, 1, ?, ?)");
             $stmt->execute($title, $alias, time(), $tankId, $eventId, $member, $filteredArticles, $totalPrice);
 
             $logger->info(
