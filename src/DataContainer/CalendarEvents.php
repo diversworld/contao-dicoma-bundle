@@ -58,8 +58,8 @@ class CalendarEvents
         $model = CalendarEventsModel::findById($id);
 
         if($model !== null) {
-            //$checkArticles = unserialize($model->checkArticles);
-            $checkArticles = $model->checkArticles;
+            $checkArticles = unserialize($model->checkArticles);
+            //$checkArticles = $model->checkArticles;
 
             if (!$checkArticles) {
                 $logger->error(
@@ -95,8 +95,8 @@ class CalendarEvents
 
             // Speichern Sie die Änderungen in der Datenbank
             Database::getInstance()->prepare("UPDATE tl_calendar_events SET checkArticles = ? WHERE id = ?")
-                //->execute(serialize($checkArticles), $id);
-                ->execute($checkArticles, $id);
+                ->execute(serialize($checkArticles), $id);
+                //->execute($checkArticles, $id);
         }
     }
 }
