@@ -48,8 +48,8 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
             'panelLayout'   => 'filter;sort,search,limit'
         ),
         'label'             => array(
-            'fields' => array('title','alias','published'),
-            'format' => '%s',
+            'fields' => array('title','priceTotal'),
+            'format' => '%s %s €',
         ),
         'global_operations' => array(
             'all' => array(
@@ -174,7 +174,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'],
                             'inputType' => 'text',
                             'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true],
-                            'save_callback' => [CalendarEvents::class, 'calculateAllGrossPrices'],
+                            'save_callback' => [CheckInvoice::class, 'calculateAllGrossPrices'],
                         ],
                         'articlePriceBrutto' => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'],
@@ -195,6 +195,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
         (
             'inputType'     => 'text',
             'eval'          => array('tl_class'=>'w25 clr'),
+            'save_callback' => ['tl_dw_check_invoice', 'calculateTotalPrice'],
             'sql'           => "DECIMAL(10,2) NOT NULL default '0.00'"
         ),
         'notes'         => array(
@@ -288,6 +289,19 @@ class tl_dw_check_invoice extends Backend
         return $options;
     }
 
+    public function calculateTotalPrice($varValue, DataContainer $dc)
+    {
+        // Get invoiceArticles from the current record
+        $invoiceArticles = unserialize($dc->activeRecord->invoiceArticles);
+
+        // Calculate total price
+        $totalPrice = array_reduce($invoiceArticles, function ($total, $article) {
+            return $total + str_replace(',', '.', $article['articlePriceBrutto']);
+        }, 0);
+
+        // Return the total price
+        return $totalPrice;
+    }
     /*
     public function getCheckArticlesOptions(DataContainer $dc)
     {

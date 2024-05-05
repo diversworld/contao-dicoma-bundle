@@ -107,20 +107,20 @@ class Tanks
             //$totalPrice = number_format($totalPrice, 2, ',', '');
 
             $stmt = $db->prepare(
-                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, checkId, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
+                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, checkId, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, 1, ?, ?)");
             $stmt->execute($title, $alias, time(), $tankId, $eventId, $member, $filteredArticles, $totalPrice);
 
             $logger->info(
                 'Invoice created successfully. Tank ID: '. print_r($tankId, true) . 'Datum ' .print_r($datum, true),
                 ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
             );
-
-            $do = Input::get('do');
-            $ref = Input::get('ref');
-
-            $url = $this->framework->getAdapter('Contao\Backend')->addToUrl('do=' . $do . '&ref=' . $ref);
-
-            return new RedirectResponse($url);
         }
+
+        $do = Input::get('do');
+        $ref = Input::get('ref');
+
+        $url = $this->framework->getAdapter('Contao\Backend')->addToUrl('do=' . $do . '&ref=' . $ref);
+
+        return new RedirectResponse($url);
     }
 }
