@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of DiCoMa.
  *
- * (c) Diversworld 2024 <eckhard@diversworld.eu>
+ * (c) DiversWorld 2024 <eckhard@diversworld.eu>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -14,13 +14,11 @@ declare(strict_types=1);
 
 namespace Diversworld\ContaoDicomaBundle\DataContainer;
 
-use Contao\Calendar;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
-use Contao\DC_Table;
 use Contao\Input;
 use Contao\System;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -47,7 +45,7 @@ class Tanks
 
 
     #[AsCallback(table: 'tl_dw_tanks', target: 'config.onsubmit', priority: 100)]
-    public function runCreateInvoice($rowData): void
+    public function runCreateInvoice(): void
     {
         if ('' !== Input::get('id') && '' === Input::post('createInvoice') && 'tl_dw_tanks' === Input::post('FORM_SUBMIT') && 'auto' !== Input::post('SUBMIT_TYPE')) {
             $this->customButtonEvent();
@@ -107,15 +105,16 @@ class Tanks
             //$totalPrice = number_format($totalPrice, 2, ',', '');
 
             $stmt = $db->prepare(
-                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, checkId, member, published, invoiceArticles, priceTotal) VALUES (?, ?, ?, ?, ?, 1, ?, ?)");
-            $stmt->execute($title, $alias, time(), $tankId, $eventId, $member, $filteredArticles, $totalPrice);
+                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, member, published, invoiceArticles, priceTotal)
+                          VALUES (?, ?, ?, ?, ?, 1, ?, ?)"
+            );
+            $stmt->execute($title, $alias, time(), $eventId, $member, $filteredArticles, $totalPrice);
 
             $logger->info(
                 'Invoice created successfully. Tank ID: '. print_r($tankId, true) . 'Datum ' .print_r($datum, true),
                 ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
             );
         }
-
         $do = Input::get('do');
         $ref = Input::get('ref');
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of DiCoMa.
  *
- * (c) Diversworld 2024 <eckhard@diversworld.eu>
+ * (c) DiversWorld 2024 <eckhard@diversworld.eu>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -22,7 +22,7 @@ PaletteManipulator::create()
 
 // Fields
 $GLOBALS['TL_DCA']['tl_calendar']['fields']['tankChecks'] = [
-    'eval'      => ['tl_class' => 'clr m12'],
+    'eval'      => ['tl_class' => 'clr w50'],
     'exclude'   => true,
     'filter'    => true,
     'inputType' => 'checkbox',

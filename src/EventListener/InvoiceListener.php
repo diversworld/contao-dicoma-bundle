@@ -4,7 +4,7 @@ declare(strict_types=1);
 /*
  * This file is part of DiCoMa.
  *
- * (c) Diversworld 2024 <eckhard@diversworld.eu>
+ * (c) DiversWorld 2024 <eckhard@diversworld.eu>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -21,7 +21,7 @@ use Contao\System;
 #[AsHook('createInvoice')]
 class InvoiceListener
 {
-    public function onCreateInvoice($row, $href, $label, $title, $icon, $attributes)
+    public function onCreateInvoice($row, $href, $label, $title, $attributes): string
     {
         $logger = System::getContainer()->get('monolog.logger.contao');
 
@@ -30,7 +30,7 @@ class InvoiceListener
             ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
         );
 
-        // Führen Sie hier Ihre Routine aus...
+        // Führen Sie hier Ihre Routine aus ...
         // Sie können die $row, $href, $label, $title, $icon, $attributes Variablen verwenden, um die ausgeführte Aktion zu personalisieren.
 
         return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$label.'</a> ';

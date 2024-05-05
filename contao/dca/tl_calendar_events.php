@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of DiCoMa.
  *
- * (c) Diversworld 2024 <eckhard@diversworld.eu>
+ * (c) DiversWorld 2024 <eckhard@diversworld.eu>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
@@ -27,12 +27,10 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['config']['onsubmit_callback'] = [
 
 // Palettes
 PaletteManipulator::create()
-    ->addLegend('tuv_legend', 'date_legend', PaletteManipulator::POSITION_AFTER)
-    ->addLegend('vendor_legend', 'tuv_legend', PaletteManipulator::POSITION_AFTER)
-    ->addLegend('article_legend', 'vendor_legend', PaletteManipulator::POSITION_AFTER)
+    ->addLegend('tuv_legend', 'date_legend')
+    ->addLegend('vendor_legend', 'tuv_legend')
+    ->addLegend('article_legend', 'vendor_legend')
     ->addField(['addCheckInfo'], 'tuv_legend', PaletteManipulator::POSITION_APPEND)
-//    ->addField(['addVendorInfo'], 'vendor_legend', PaletteManipulator::POSITION_APPEND)
-//    ->addField(['addArticleInfo'], 'article_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_calendar_events');
 
 // Selector

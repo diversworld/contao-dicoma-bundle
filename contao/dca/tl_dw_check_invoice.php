@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 
 /*
@@ -13,12 +12,10 @@ declare(strict_types=1);
  * @link https://github.com/diversworld/contao-dicoma-bundle
  */
 use Contao\Backend;
-use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
-use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
 use Diversworld\ContaoDicomaBundle\DataContainer\CheckInvoice;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 
@@ -43,13 +40,13 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
     'list'        => array(
         'sorting'           => array(
             'mode'          => DataContainer::MODE_SORTABLE,
-            'fields'        => array('title','alias','published'),
+            'fields'        => array('title','alias','member','published'),
             'flag'          => DataContainer::SORT_ASC,
             'panelLayout'   => 'filter;sort,search,limit'
         ),
         'label'             => array(
-            'fields' => array('title','priceTotal'),
-            'format' => '%s %s €',
+            'fields' => array('title','priceTotal','member','checkId'),
+            'format' => '%s - Summe: %s€ %s %s',
         ),
         'global_operations' => array(
             'all' => array(
@@ -59,36 +56,17 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
             )
         ),
         'operations'        => array(
-            'edit'   => array(
-                'href'          => 'act=edit',
-                'icon'          => 'edit.svg'
-            ),
+            'edit',
             'children',
-            'copy'   => array(
-                'href'          => 'act=copy',
-                'icon'          => 'copy.svg'
-            ),
-            'delete' => array(
-                'href'          => 'act=delete',
-                'icon'          => 'delete.svg',
-                'attributes'    => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"'
-            ),
-            'show'   => array(
-                'href'          => 'act=show',
-                'icon'          => 'show.svg',
-                'attributes'    => 'style="margin-right:3px"'
-            ),
-            'toggle' => array
-            (
-                'href'          => 'act=toggle&amp;field=published',
-                'icon'          => 'visible.svg',
-                'showInHeader'  => true
-            )
+            'copy',
+            'delete',
+            'show',
+            'toggle'
         )
     ),
     'palettes'          => array(
         '__selector__'      => array('addArticleInfo'),
-        'default'           => '{title_legend},title,alias,pid;
+        'default'           => '{title_legend},title,alias;
                                 {details_legend},member,checkId;
                                 {article_legend},invoiceArticles,priceTotal;
                                 {notes_legend},notes;
@@ -195,7 +173,6 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
         (
             'inputType'     => 'text',
             'eval'          => array('tl_class'=>'w25 clr'),
-            'save_callback' => ['tl_dw_check_invoice', 'calculateTotalPrice'],
             'sql'           => "DECIMAL(10,2) NOT NULL default '0.00'"
         ),
         'notes'         => array(
@@ -250,7 +227,7 @@ class tl_dw_check_invoice extends Backend
      *
      * @throws Exception
      */
-    public function generateAlias($varValue, DataContainer $dc)
+    public function generateAlias(mixed $varValue, DataContainer $dc)
     {
         $aliasExists = static function (string $alias) use ($dc): bool {
             $result = Database::getInstance()
@@ -276,7 +253,7 @@ class tl_dw_check_invoice extends Backend
         return $varValue;
     }
 
-    public function getMemberOptions()
+    public function getMemberOptions(): array
     {
         $members = Database::getInstance()->execute("SELECT id, CONCAT(firstname, ' ', lastname) as name FROM tl_member")->fetchAllAssoc();
         $options = array();
@@ -288,39 +265,4 @@ class tl_dw_check_invoice extends Backend
 
         return $options;
     }
-
-    public function calculateTotalPrice($varValue, DataContainer $dc)
-    {
-        // Get invoiceArticles from the current record
-        $invoiceArticles = unserialize($dc->activeRecord->invoiceArticles);
-
-        // Calculate total price
-        $totalPrice = array_reduce($invoiceArticles, function ($total, $article) {
-            return $total + str_replace(',', '.', $article['articlePriceBrutto']);
-        }, 0);
-
-        // Return the total price
-        return $totalPrice;
-    }
-    /*
-    public function getCheckArticlesOptions(DataContainer $dc)
-    {
-        // Zugriff auf PID des aktuellen Datensatzes
-        $tankId = $dc->activeRecord->pid;
-
-        $tankPid = Database::getInstance()->prepare("SELECT pid FROM tl_dw_tanks WHERE id=?")->execute($tankId)->fetchAssoc();
-
-        // Zugriff auf das 'checkArticles' Feld des Events
-        $eventRecord = Database::getInstance()->prepare("SELECT checkArticles FROM tl_calendar_events WHERE id=?")->execute($tankPid['pid'])->fetchAssoc();
-        $checkArticles = unserialize($eventRecord['checkArticles']);
-
-        // Baue die Optionen für das 'invoiceArticles' Feld auf
-        $options = array();
-        foreach($checkArticles as $key => $value)
-        {
-            $options[$key] = $value;
-        }
-
-        return $options;
-    }*/
 }

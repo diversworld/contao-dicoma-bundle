@@ -5,14 +5,13 @@ declare(strict_types=1);
 /*
  * This file is part of DiCoMa.
  *
- * (c) Diversworld 2024 <eckhard@diversworld.eu>
+ * (c) DiversWorld 2024 <eckhard@diversworld.eu>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
  * @link https://github.com/diversworld/contao-dicoma-bundle
  */
 use Contao\Backend;
-use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
@@ -26,7 +25,7 @@ use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
 $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
     'config'            => array(
         'dataContainer'     => DC_Table::class,
-        //'ptable'            => 'tl_calendar_events',
+        'ptable'            => 'tl_calendar_events',
         'ctable'            => array('tl_dw_check_invoice'),
         'enableVersioning'  => true,
         'onsubmit_callback' => [],
@@ -45,7 +44,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
     'list'              => array(
         'sorting'           => array(
             'mode'              => DataContainer::MODE_SORTABLE,
-            'fields'            => array('member, lastCheckDate, nextCheckDate, o2clean'),
+            'fields'            => array('title','member, lastCheckDate, nextCheckDate, o2clean'),
             'flag'              => DataContainer::SORT_ASC,
             'panelLayout'       => 'filter;sort,search,limit',
         ),
@@ -64,45 +63,16 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             )
         ),
         'operations'        => array(
-            /*'edit'              => array(
-                'href'          => 'act=edit',
-                'icon'          => 'edit.svg'
-            ),
-            'copy'          => array(
-                'href'          => 'act=copy',
-                'icon'          => 'copy.svg'
-            ),
-            'delete'        => array(
-                'href'          => 'act=delete',
-                'icon'          => 'delete.svg',
-                'attributes'    => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"'
-            ),
-            'show'          => array(
-                'href'          => 'act=show',
-                'icon'          => 'show.svg',
-                'attributes'    => 'style="margin-right:3px"'
-            ),
-            'toggle'        => array(
-                'href'          => 'act=toggle&amp;field=published',
-                'icon'          => 'visible.svg',
-                'showInHeader'  => true
-            ),
-            'operations' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['tanks'],
-                'href' => 'do=check_collection&table=tl_dw_check_invoice',
-                'icon' => 'editor.svg'
-            ),*/
             'edit',
             'copy',
             'delete',
-            'toggle' => array
-            (
-                'href'                => 'act=toggle&amp;field=published',
-                'icon'                => 'visible.svg',
-                'showInHeader'        => true
-            ),
+            'toggle',
             'show',
-            'children',
+            'children'=> array(
+                'label' => &$GLOBALS['TL_LANG']['tl_dw_tanks']['tanks'],
+                'href' => 'do=check_collection&table=tl_dw_check_invoice',
+                'icon' => 'editor.svg'
+            ),
         ),
     ),
     'palettes'          => array(
@@ -270,7 +240,7 @@ class tl_dw_tanks extends Backend
      *
      * @throws Exception
      */
-    public function generateAlias($varValue, DataContainer $dc)
+    public function generateAlias(mixed $varValue, DataContainer $dc): mixed
     {
         $aliasExists = static function (string $alias) use ($dc): bool {
             $result = Database::getInstance()
@@ -296,10 +266,10 @@ class tl_dw_tanks extends Backend
         return $varValue;
     }
 
-    function formatCheckDates($row, $label)
+    function formatCheckDates($row): string
     {
         $members = $this->getMemberOptions(); // Add this line to get member options stucture
-        $memberName = isset($members[$row['member']]) ? $members[$row['member']] : 'N/A';
+        $memberName = $members[$row['member']] ?? 'N/A';
 
         $title = $row['title'] ?? '';
         $serialnumber = $row['serialNumber'] ?? '';
@@ -322,7 +292,7 @@ class tl_dw_tanks extends Backend
             : 'N/A';
 
         if($invoices == 1) {
-            return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[ %s Rechnung ] [ letzte Rechnung: %s € ]</span>',
+            return sprintf(' %s - %s - %s L - O2: %s - %s - letzter TÜV %s - nächster TÜV %s <span style="color:#b3b3b3; padding-left:4px;">[%s Rechnung] [letzte Rechnung: %s €]</span>',
                 $title,
                 $serialnumber,
                 $size,
@@ -358,7 +328,7 @@ class tl_dw_tanks extends Backend
         }
     }
 
-    function formatGroupHeader($group, $mode, $field, $row)
+    function formatGroupHeader($group, $field, $row): string
     {
         if ($field === 'member') { // Check if field is 'member'
             $db = Database::getInstance();
@@ -372,6 +342,9 @@ class tl_dw_tanks extends Backend
         return $group; // default return
     }
 
+    /**
+     * @throws Exception
+     */
     public function setLastCheckDate($varValue, DataContainer $dc)
     {
         if ($varValue)
@@ -383,7 +356,7 @@ class tl_dw_tanks extends Backend
 
             $row = $result->fetchAssoc();
 
-            $lastCheckDate = new \DateTime('@'.$row['startDate']);
+            $lastCheckDate = new DateTime('@'.$row['startDate']);
             $lastCheckDate->modify('+2 years');
 
             $nextCheckDate = $lastCheckDate->getTimestamp();
@@ -397,7 +370,7 @@ class tl_dw_tanks extends Backend
         return $varValue;
     }
 
-    public function getMemberOptions()
+    public function getMemberOptions(): array
     {
         $members = Database::getInstance()->execute("SELECT id, CONCAT(firstname, ' ', lastname) as name FROM tl_member")->fetchAllAssoc();
         $options = array();
@@ -414,12 +387,10 @@ class tl_dw_tanks extends Backend
     {
         $tankId = $arrRow['id'];
 
-        $lastInvoice = Database::getInstance()
+        return Database::getInstance()
             ->prepare("SELECT priceTotal AS total FROM tl_dw_check_invoice WHERE pid = ? ORDER BY id DESC LIMIT 1")
             ->execute($tankId)
             ->fetchAssoc()['total'];
-
-        return $lastInvoice;
     }
 
     public function listChildren($arrRow)
@@ -428,16 +399,14 @@ class tl_dw_tanks extends Backend
         $tankId = $arrRow['id'];
 
         // Query the database to find the number of invoices related to this tank
-        $numberOfInvoices = Database::getInstance()
+        // Return the count of invoices
+        return Database::getInstance()
             ->prepare("SELECT COUNT(*) AS count FROM tl_dw_check_invoice WHERE pid = ?")
             ->execute($tankId)
             ->fetchAssoc()['count'];
-
-        // Return the count of invoices
-        return $numberOfInvoices;
     }
 
-    public function filterTanksByEventId(DataContainer $dc)
+    public function filterTanksByEventId(DataContainer $dc): void
     {
         if (Input::get('do') == 'calendar' && ($eventId = Input::get('event_id')) !== null) {
             $GLOBALS['TL_DCA']['tl_dw_tanks']['list']['sorting']['filter'] = [['pid=?', $eventId]];

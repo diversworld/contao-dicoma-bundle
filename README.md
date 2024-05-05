@@ -1,4 +1,4 @@
-<img alt="Diversworld" src="./docs/Diversworld-Wort-Logo.png" width="250"/>
+<img alt="DiversWorld" src="./docs/Diversworld-Wort-Logo.png" width="250"/>
 
 # Welcome to Dive Course Manager Bundle (DiCoMa)
 ### Verwaltung von Equipment und Tauchkursen für Tauchvereine und oder Tauchschulen
