@@ -59,7 +59,6 @@ class CheckInvoice
                         ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
                     );
                 }
-
             }
 
             unset($row);

@@ -16,8 +16,8 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
-use Diversworld\ContaoDicomaBundle\DataContainer\CheckInvoice;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * Table tl_dw_check_invoice
@@ -128,6 +128,7 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
             'inputType' => 'multiColumnEditor',
             'eval'      => [
                 'tl_class' => 'clr compact',
+                'submitCallback' => ['tl_dw_check_invoice', 'calculateTotalPrice'],
                 'multiColumnEditor' => [
                     'skipCopyValuesOnAdd' => false,
                     'editorTemplate' => 'multi_column_editor_backend_default',
@@ -151,8 +152,8 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                         'articlePriceNetto' => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceNetto'],
                             'inputType' => 'text',
+                            'save_callback' => ['tl_dw_check_invoice', 'calculateBruttoFromNetto'],
                             'eval'      => ['groupStyle' => 'width:100px', 'submitOnChange' => true],
-                            'save_callback' => [CheckInvoice::class, 'calculateAllGrossPrices'],
                         ],
                         'articlePriceBrutto' => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_dw_check_invoice']['articlePriceBrutto'],
@@ -167,12 +168,16 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                     ]
                 ]
             ],
+            'save_callback' => array(
+                array('tl_dw_check_invoice', 'calculateBruttoFromNetto')
+            ),
             'sql'       => "blob NULL"
         ),
         'priceTotal'         => array
         (
             'inputType'     => 'text',
             'eval'          => array('tl_class'=>'w25 clr'),
+            'save_callback' => ['tl_dw_check_invoice', 'calculateTotalPrice'],
             'sql'           => "DECIMAL(10,2) NOT NULL default '0.00'"
         ),
         'notes'         => array(
@@ -227,8 +232,9 @@ class tl_dw_check_invoice extends Backend
      *
      * @throws Exception
      */
-    public function generateAlias(mixed $varValue, DataContainer $dc)
+    public function generateAlias(mixed $varValue, DataContainer $dc): mixed
     {
+        // Closure that checks if a given alias already exists
         $aliasExists = static function (string $alias) use ($dc): bool {
             $result = Database::getInstance()
                 ->prepare("SELECT id FROM tl_dw_check_invoice WHERE alias=? AND id!=?")
@@ -239,14 +245,23 @@ class tl_dw_check_invoice extends Backend
 
         // Generate the alias if there is none
         if (!$varValue) {
-            $varValue = System::getContainer()->get('contao.slug')->generate(
-                $dc->activeRecord->title,
-                [],
-                $aliasExists
-            );
-        } elseif (preg_match('/^[1-9]\d*$/', $varValue)) {
+            /** @var SluggerInterface $slugger */
+            $slugger = System::getContainer()->get('contao.slug');
+
+            // Ensure the retrieved service implements the expected interface
+            if (!$slugger instanceof SluggerInterface) {
+                throw new RuntimeException('The "contao.slug" service should implement SluggerInterface.');
+            }
+
+            // Generate the alias
+            $varValue = $slugger->generate($dc->activeRecord->title, [], $aliasExists);
+        }
+        // If the alias is numeric
+        elseif (preg_match('/^[1-9]\d*$/', $varValue)) {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasNumeric'], $varValue));
-        } elseif ($aliasExists($varValue)) {
+        }
+        // If the alias already exists
+        elseif ($aliasExists($varValue)) {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
         }
 
@@ -264,5 +279,31 @@ class tl_dw_check_invoice extends Backend
         }
 
         return $options;
+    }
+
+    public function calculateBruttoFromNetto($value, DataContainer $dc)
+    {
+        $invoiceArticles = unserialize($value);
+
+        foreach ($invoiceArticles as &$item) {
+            // Konvertieren Sie den String-Wert zu einem numerischen Wert
+            $nettoPrice = (float) str_replace(',', '.', $item['articlePriceNetto']);
+
+            // Berechnen Sie den Brutto-Wert basierend auf dem MwSt.-Satz (angenommen 19%)
+            $grossPrice = $nettoPrice * 1.19;
+            $grossRoundedPrice = ceil($grossPrice / 0.05) * 0.05;
+
+            // Aktualisieren Sie den Brutto-Wert im aktuellen Artikel
+            $item['articlePriceBrutto'] = number_format($grossRoundedPrice, 2);
+
+            $totalPrice += $grossRoundedPrice;
+        }
+
+        // Aktualisieren Sie den Gesamtpreis in der Datenbank
+        Database::getInstance()->prepare("UPDATE tl_dw_check_invoice SET priceTotal = ? WHERE id = ?")
+            ->execute(number_format($totalPrice, 2), $dc->id);
+
+        // Geben Sie das aktualisierte invoiceArticles-Array zurück, um es in der Datenbank zu speichern
+        return serialize($invoiceArticles);
     }
 }
