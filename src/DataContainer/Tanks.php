@@ -47,6 +47,13 @@ class Tanks
     #[AsCallback(table: 'tl_dw_tanks', target: 'config.onsubmit', priority: 100)]
     public function runCreateInvoice(): void
     {
+        $logger = System::getContainer()->get('monolog.logger.contao');
+
+        $logger->info(
+            'Formular vor If: '. sprintf('%s', Input::get('id')) . '2. createInvoce: '. sprintf('%s', Input::post('createInvoice')) . '3. tl_dw_tanks: ' . sprintf('%s', Input::post('FORM_SUBMIT')) . '4. auto: ' . sprintf('%s', Input::post('SUBMIT_TYPE')),
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+        );
+
         if ('' !== Input::get('id') && '' === Input::post('createInvoice') && 'tl_dw_tanks' === Input::post('FORM_SUBMIT') && 'auto' !== Input::post('SUBMIT_TYPE')) {
             $this->customButtonEvent();
         }
@@ -92,29 +99,40 @@ class Tanks
 
             $filteredArticles = array_values($filteredArticles);
 
-            $logger->info(
-                'Filtered Articles: '. print_r($filteredArticles, true),
-                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-            );
-
             // Calculate total price
             $totalPrice = array_reduce($filteredArticles, function ($total, $article) {
                 return $total + str_replace(',', '.', $article['articlePriceBrutto']);
             }, 0);
 
-            //$totalPrice = number_format($totalPrice, 2, ',', '');
+            $totalPrice = number_format($totalPrice, 2);
 
-            $stmt = $db->prepare(
-                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, member, published, invoiceArticles, priceTotal)
-                          VALUES (?, ?, ?, ?, ?, 1, ?, ?)"
+            $query = "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, checkId, member, published, invoiceArticles, priceTotal)
+                      VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)";
+
+            $stmt = $db->prepare($query);
+
+            /*$stmt = $db->prepare(
+                "INSERT INTO tl_dw_check_invoice (title, alias, tstamp, pid, checkID, member, published, invoiceArticles, priceTotal)
+                VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)"
+            );*/
+
+            $logger->info(
+                'Database Variablem: '. print_r($title, true).', '. print_r($alias, true).', '. print_r(time(), true).', '. print_r($eventId, true).', '. print_r($member, true).', '. print_r(serialize($filteredArticles), true).', '. print_r('1', true).', '. print_r($totalPrice, true),
+                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
             );
-            $stmt->execute($title, $alias, time(), $eventId, $member, $filteredArticles, $totalPrice);
+            $logger->info(
+                'Database Statement: '. print_r($query, true),
+                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+            );
+
+            $stmt->execute($title, $alias, time(), $tankId, $eventId, $member, serialize($filteredArticles), $totalPrice);
 
             $logger->info(
                 'Invoice created successfully. Tank ID: '. print_r($tankId, true) . 'Datum ' .print_r($datum, true),
                 ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
             );
         }
+
         $do = Input::get('do');
         $ref = Input::get('ref');
 

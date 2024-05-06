@@ -387,10 +387,16 @@ class tl_dw_tanks extends Backend
     {
         $tankId = $arrRow['id'];
 
-        return Database::getInstance()
+        $result = Database::getInstance()
             ->prepare("SELECT priceTotal AS total FROM tl_dw_check_invoice WHERE pid = ? ORDER BY id DESC LIMIT 1")
             ->execute($tankId)
-            ->fetchAssoc()['total'];
+            ->fetchAssoc();
+
+        // Prüfen, ob das Abfrageergebnis nicht leer ist
+        if ($result){
+            return $result['total'];
+        }
+        return null;  // Oder einen anderen Standardwert zurückgeben
     }
 
     public function listChildren($arrRow)
