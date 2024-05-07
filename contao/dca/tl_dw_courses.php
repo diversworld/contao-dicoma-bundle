@@ -24,13 +24,13 @@ use Diversworld\ContaoDicomaBundle\Model\CoursesModel;
  * Table tl_dw_courses
  */
 $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
-    'config'      => array(
+    'config'            => array(
         'dataContainer'     => DC_Table::class,
         'ptable'            => 'tl_dw_tanks',
         'ctable'            => array('tl_content'),
         'enableVersioning'  => true,
         'sql'               => array(
-            'keys' => array(
+            'keys'      => array(
                 'id'        => 'primary',
                 'tstamp'    => 'index',
                 'alias'     => 'index',
@@ -104,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
         'pid'       => [
             'inputType' => 'text',
             'foreignKey'=> 'tl_dw_tanks.title',
-            'eval'      => ['submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 clr'],
+            'eval'      => array('submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 clr'),
             'sql'       => "int(10) unsigned NOT NULL default 0",
         ],
         'description' => array(
@@ -149,21 +149,21 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
         ),
         'overwriteMeta' => array
         (
-            'label'     => &$GLOBALS['TL_LANG']['tl_content']['overwriteMeta'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['overwriteMeta'],
             'inputType' => 'checkbox',
             'eval'      => array('submitOnChange'=>true, 'tl_class'=>'w50 clr'),
             'sql'       => array('type' => 'boolean', 'default' => false)
         ),
         'singleSRC' => array
         (
-            'label'     => &$GLOBALS['TL_LANG']['tl_content']['singleSRC'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['singleSRC'],
             'inputType' => 'fileTree',
             'eval'      => array('filesOnly'=>true, 'fieldType'=>'radio', 'extensions'=>'%contao.image.valid_extensions%', 'mandatory'=>true),
             'sql'       => "binary(16) NULL"
         ),
         'alt' => array
         (
-            'label'     => &$GLOBALS['TL_LANG']['tl_content']['alt'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['alt'],
             'search'    => true,
             'inputType' => 'text',
             'eval'      => array('maxlength'=>255, 'tl_class'=>'w50'),
@@ -171,7 +171,7 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
         ),
         'imageTitle' => array
         (
-            'label'     => &$GLOBALS['TL_LANG']['tl_content']['imageTitle'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['imageTitle'],
             'search'    => true,
             'inputType' => 'text',
             'eval'      => array('maxlength'=>255, 'tl_class'=>'w50'),
@@ -273,18 +273,15 @@ class tl_dw_courses extends Backend
      */
     public function generateAlias(mixed $varValue, DataContainer $dc): mixed
     {
-        $aliasExists = static function (string $alias) use ($dc): bool {
-            $result = Database::getInstance()
-                ->prepare("SELECT id FROM tl_dw_courses WHERE alias=? AND id!=?")
-                ->execute($alias, $dc->id);
-
-            return $result->numRows > 0;
+        $aliasExists = function (string $alias) use ($dc): bool
+        {
+            return $this->Database->prepare("SELECT id FROM tl_dw_courses WHERE alias=? AND id!=?")->execute($alias, $dc->id)->numRows > 0;
         };
 
-        // Generate the alias if there is none
+        // Generate alias if there is none
         if (!$varValue)
         {
-            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, CoursesModel::findById($dc->activeRecord->pid)->jumpTo, $aliasExists);
+            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->headline, CoursesModel::findByPk($dc->activeRecord->pid)->jumpTo, $aliasExists);
         }
         elseif (preg_match('/^[1-9]\d*$/', $varValue))
         {
