@@ -3,28 +3,30 @@
 declare(strict_types=1);
 
 /*
- * This file is part of DiCoMa.
+ * This file is part of DWCourseManager.
  *
- * (c) DiversWorld 2024 <eckhard@diversworld.eu>
+ * (c) Eckhard Becker 2024 <info@diversworld.eu>
  * @license GPL-3.0-or-later
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
- * @link https://github.com/diversworld/contao-dicoma-bundle
+ * @link https://github.com/diversworld/contao-dw-coursemanager-bundle
  */
 
+use Contao\Backend;
 use Contao\DataContainer;
 use Contao\DC_Table;
+use Contao\Input;
 
 /**
-* Table tl_dw_courses
-*/
-$GLOBALS['TL_DCA']['tl_dw_courses'] = array(
+ * Table tl_dw_courses
+ */
+$GLOBALS['TL_DCA']['tl_courses'] = array(
     'config'      => array(
         'dataContainer'    => DC_Table::class,
         'enableVersioning' => true,
         'sql'              => array(
             'keys' => array(
-            'id' => 'primary'
+                'id' => 'primary'
             )
         ),
     ),
@@ -52,8 +54,8 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
                 'icon'  => 'edit.svg'
             ),
             'copy'   => array(
-            'href'  => 'act=copy',
-            'icon'  => 'copy.svg'
+                'href'  => 'act=copy',
+                'icon'  => 'copy.svg'
             ),
             'delete' => array(
                 'href'       => 'act=delete',
@@ -64,82 +66,84 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
                 'href'       => 'act=show',
                 'icon'       => 'show.svg',
                 'attributes' => 'style="margin-right:3px"'
-                ),
-            )
-        ),
-        'palettes'    => array(
-            '__selector__' => array('addSubpalette'),
-            'default'      => '{first_legend},title,selectField,checkboxField,multitextField;{second_legend},addSubpalette'
-        ),
-        'subpalettes' => array(
-            'addSubpalette' => 'textareaField',
-        ),
-        'fields'      => array(
-            'id'             => array(
-                'sql' => "int(10) unsigned NOT NULL auto_increment"
             ),
-            'tstamp'         => array(
+        )
+    ),
+    'palettes'    => array(
+        '__selector__' => array('addSubpalette'),
+        'default'      => '{first_legend},title,selectField,checkboxField,multitextField;{second_legend},addSubpalette'
+    ),
+    'subpalettes' => array(
+        'addSubpalette' => 'textareaField',
+    ),
+    'fields'      => array(
+        'id'             => array(
+            'sql' => "int(10) unsigned NOT NULL auto_increment"
+        ),
+        'tstamp'         => array(
             'sql' => "int(10) unsigned NOT NULL default '0'"
-            ),
-            'title'          => array(
-                'inputType' => 'text',
-                'exclude'   => true,
-                'search'    => true,
-                'filter'    => true,
-                'sorting'   => true,
-                'flag'      => DataContainer::SORT_INITIAL_LETTER_ASC,
-                'eval'      => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'),
-                'sql'       => "varchar(255) NOT NULL default ''"
-            ),
-            'selectField'    => array(
-                'inputType' => 'select',
-                'exclude'   => true,
-                'search'    => true,
-                'filter'    => true,
-                'sorting'   => true,
-                'reference' => &$GLOBALS['TL_LANG']['tl_dw_courses'],
-                'options'   => array('firstoption', 'secondoption'),
-                //'foreignKey'            => 'tl_user.name',
-                //'options_callback'      => array('CLASS', 'METHOD'),
-                'eval'      => array('includeBlankOption' => true, 'tl_class' => 'w50'),
-                'sql'       => "varchar(255) NOT NULL default ''",
-            ),
-            'checkboxField'  => array(
-                'inputType' => 'select',
-                'exclude'   => true,
-                'search'    => true,
-                'filter'    => true,
-                'sorting'   => true,
-                'reference' => &$GLOBALS['TL_LANG']['tl_dw_courses'],
-                'options'   => array('firstoption', 'secondoption'),
-                //'foreignKey'            => 'tl_user.name',
-                //'options_callback'      => array('CLASS', 'METHOD'),
-                'eval'      => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w50'),
-                'sql'       => "varchar(255) NOT NULL default ''",
-            ),
-            'multitextField' => array(
-                'inputType' => 'text',
-                'exclude'   => true,
-                'search'    => true,
-                'filter'    => true,
-                'sorting'   => true,
-                'eval'      => array('multiple' => true, 'size' => 4, 'decodeEntities' => true, 'tl_class' => 'w50'),
-                'sql'       => "varchar(255) NOT NULL default ''"
-            ),
-            'addSubpalette'  => array(
-                'exclude'   => true,
-                'inputType' => 'checkbox',
-                'eval'      => array('submitOnChange' => true, 'tl_class' => 'w50 clr'),
-                'sql'       => "char(1) NOT NULL default ''"
-            ),
-            'textareaField'  => array(
-                'inputType' => 'textarea',
-                'exclude'   => true,
-                'search'    => true,
-                'filter'    => true,
-                'sorting'   => true,
-                'eval'      => array('rte' => 'tinyMCE', 'tl_class' => 'clr'),
-                'sql'       => 'text NULL'
-            )
+        ),
+        'title'          => array(
+            'inputType' => 'text',
+            'exclude'   => true,
+            'search'    => true,
+            'filter'    => true,
+            'sorting'   => true,
+            'flag'      => DataContainer::SORT_INITIAL_LETTER_ASC,
+            'eval'      => array('mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'),
+            'sql'       => "varchar(255) NOT NULL default ''"
+        ),
+        'selectField'    => array(
+            'inputType' => 'select',
+            'exclude'   => true,
+            'search'    => true,
+            'filter'    => true,
+            'sorting'   => true,
+            'reference' => &$GLOBALS['TL_LANG']['tl_dw_courses'],
+            'options'   => array('firstoption', 'secondoption'),
+            //'foreignKey'            => 'tl_user.name',
+            //'options_callback'      => array('CLASS', 'METHOD'),
+            'eval'      => array('includeBlankOption' => true, 'tl_class' => 'w50'),
+            'sql'       => "varchar(255) NOT NULL default ''",
+            //'relation'  => array('type' => 'hasOne', 'load' => 'lazy')
+        ),
+        'checkboxField'  => array(
+            'inputType' => 'select',
+            'exclude'   => true,
+            'search'    => true,
+            'filter'    => true,
+            'sorting'   => true,
+            'reference' => &$GLOBALS['TL_LANG']['tl_dw_courses'],
+            'options'   => array('firstoption', 'secondoption'),
+            //'foreignKey'            => 'tl_user.name',
+            //'options_callback'      => array('CLASS', 'METHOD'),
+            'eval'      => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w50'),
+            'sql'       => "varchar(255) NOT NULL default ''",
+            //'relation'  => array('type' => 'hasOne', 'load' => 'lazy')
+        ),
+        'multitextField' => array(
+            'inputType' => 'text',
+            'exclude'   => true,
+            'search'    => true,
+            'filter'    => true,
+            'sorting'   => true,
+            'eval'      => array('multiple' => true, 'size' => 4, 'decodeEntities' => true, 'tl_class' => 'w50'),
+            'sql'       => "varchar(255) NOT NULL default ''"
+        ),
+        'addSubpalette'  => array(
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => array('submitOnChange' => true, 'tl_class' => 'w50 clr'),
+            'sql'       => "char(1) NOT NULL default ''"
+        ),
+        'textareaField'  => array(
+            'inputType' => 'textarea',
+            'exclude'   => true,
+            'search'    => true,
+            'filter'    => true,
+            'sorting'   => true,
+            'eval'      => array('rte' => 'tinyMCE', 'tl_class' => 'clr'),
+            'sql'       => 'text NULL'
+        )
     )
 );
