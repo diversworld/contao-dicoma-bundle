@@ -18,6 +18,7 @@ use Contao\DC_Table;
 use Contao\Input;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
+use Diversworld\ContaoDicomaBundle\Model\TanksModel;
 
 /**
  * Table tl_dw_tanks
@@ -251,15 +252,16 @@ class tl_dw_tanks extends Backend
         };
 
         // Generate the alias if there is none
-        if (!$varValue) {
-            $varValue = System::getContainer()->get('contao.slug')->generate(
-                $dc->activeRecord->title,
-                [],
-                $aliasExists
-            );
-        } elseif (preg_match('/^[1-9]\d*$/', $varValue)) {
+        if (!$varValue)
+        {
+            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, TanksModel::findById($dc->activeRecord->pid)->jumpTo, $aliasExists);
+        }
+        elseif (preg_match('/^[1-9]\d*$/', $varValue))
+        {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasNumeric'], $varValue));
-        } elseif ($aliasExists($varValue)) {
+        }
+        elseif ($aliasExists($varValue))
+        {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
         }
 

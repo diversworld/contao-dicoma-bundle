@@ -21,10 +21,9 @@ use Diversworld\ContaoDicomaBundle\Model\CoursesModel;
 // Add child table tl_calendar_events_member to tl_calendar_events
 $GLOBALS['BE_MOD']['content']['calendar']['tables'][] = 'tl_dw_tanks';
 
-
 $GLOBALS['BE_MOD']['diversworld_modules'] = array(
     'course_collection' => array(
-       'tables' => array('tl_dw_courses','tl_dw_instructors')
+        'tables' => array('tl_dw_courses'),
     ),
     'check_collection' => array(
        'tables' => array('tl_dw_tanks','tl_dw_check_invoice')

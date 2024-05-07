@@ -17,6 +17,7 @@ use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
+use Diversworld\ContaoDicomaBundle\Model\CheckInvoiceModel;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
@@ -234,7 +235,6 @@ class tl_dw_check_invoice extends Backend
      */
     public function generateAlias(mixed $varValue, DataContainer $dc): mixed
     {
-        // Closure that checks if a given alias already exists
         $aliasExists = static function (string $alias) use ($dc): bool {
             $result = Database::getInstance()
                 ->prepare("SELECT id FROM tl_dw_check_invoice WHERE alias=? AND id!=?")
@@ -244,24 +244,16 @@ class tl_dw_check_invoice extends Backend
         };
 
         // Generate the alias if there is none
-        if (!$varValue) {
-            /** @var SluggerInterface $slugger */
-            $slugger = System::getContainer()->get('contao.slug');
-
-            // Ensure the retrieved service implements the expected interface
-            if (!$slugger instanceof SluggerInterface) {
-                throw new RuntimeException('The "contao.slug" service should implement SluggerInterface.');
-            }
-
-            // Generate the alias
-            $varValue = $slugger->generate($dc->activeRecord->title, [], $aliasExists);
+        if (!$varValue)
+        {
+            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, CheckInvoiceModel::findById($dc->activeRecord->pid)->jumpTo, $aliasExists);
         }
-        // If the alias is numeric
-        elseif (preg_match('/^[1-9]\d*$/', $varValue)) {
+        elseif (preg_match('/^[1-9]\d*$/', $varValue))
+        {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasNumeric'], $varValue));
         }
-        // If the alias already exists
-        elseif ($aliasExists($varValue)) {
+        elseif ($aliasExists($varValue))
+        {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
         }
 
