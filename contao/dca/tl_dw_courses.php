@@ -98,10 +98,7 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'search'    => true,
             'inputType' => 'text',
             'eval'      => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
-            'save_callback' => array
-            (
-                array('tl_dw_courses', 'generateAlias')
-            ),
+            'save_callback' => array('tl_dw_courses', 'generateAlias'),
             'sql'       => "varchar(255) BINARY NOT NULL default ''"
         ),
         'pid'       => [
@@ -222,17 +219,6 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'eval'          => array('cols'=>4, 'tl_class'=>'w50'),
             'reference'     => &$GLOBALS['TL_LANG']['MSC'],
             'sql'           => "varchar(32) NOT NULL default 'above'"
-        ),
-        'checkboxField'  => array(
-            'inputType'     => 'select',
-            'exclude'       => true,
-            'search'        => true,
-            'filter'        => true,
-            'sorting'       => true,
-            'reference'     => &$GLOBALS['TL_LANG']['tl_dw_courses'],
-            'options'       => array('firstoption', 'secondoption'),
-            'eval'          => array('includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w50'),
-            'sql'           => "varchar(255) NOT NULL default ''",
         ),
         'remarks'  => array(
             'inputType'     => 'textarea',
