@@ -13,7 +13,6 @@ declare(strict_types=1);
  */
 use Contao\Backend;
 use Contao\BackendUser;
-use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
 use Contao\System;
@@ -26,7 +25,6 @@ use Diversworld\ContaoDicomaBundle\Model\CoursesModel;
 $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
     'config'            => array(
         'dataContainer'     => DC_Table::class,
-        'ptable'            => 'tl_dw_tanks',
         'ctable'            => array('tl_content'),
         'enableVersioning'  => true,
         'sql'               => array(
@@ -47,7 +45,7 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
         ),
         'label'             => array(
             'fields' => array('title','alias','category','published'),
-            'format' => '%s',
+            'format' => '%s %s %s %s',
         ),
         'global_operations' => array(
             'all' => array(
@@ -101,12 +99,6 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'save_callback' => array('tl_dw_courses', 'generateAlias'),
             'sql'       => "varchar(255) BINARY NOT NULL default ''"
         ),
-        'pid'       => [
-            'inputType' => 'text',
-            'foreignKey'=> 'tl_dw_tanks.title',
-            'eval'      => array('submitOnChange' => true,'mandatory'=>true, 'tl_class' => 'w33 clr'),
-            'sql'       => "int(10) unsigned NOT NULL default 0",
-        ],
         'description' => array(
             'inputType' => 'textarea',
             'exclude'   => true,
