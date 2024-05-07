@@ -39,13 +39,13 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
     'list'        => array(
         'sorting'           => array(
             'mode'          => DataContainer::MODE_SORTABLE,
-            'fields'        => array('title','alias','category','published'),
+            'fields'        => array('title','category','published'),
             'flag'          => DataContainer::SORT_ASC,
             'panelLayout'   => 'filter;sort,search,limit'
         ),
         'label'             => array(
-            'fields' => array('title','alias','category','published'),
-            'format' => '%s %s %s %s',
+            'fields' => array('title','category'),
+            'format' => '%s %s',
         ),
         'global_operations' => array(
             'all' => array(
@@ -65,8 +65,8 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
     ),
     'palettes'    => array(
         '__selector__' => array('addImage', 'overwriteMeta'),
-        'default'      => '{first_legend},title,alias,category;
-                           {details_section},description,requirements;
+        'default'      => '{first_legend},title,alias;
+                           {details_section},category,description,requirements;
                            {image_legend},addImage;
                            {publish_legend},published,start,stop'
     ),
@@ -117,11 +117,6 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
             'eval'      => array('rte' => 'tinyMCE', 'tl_class' => 'clr'),
             'sql'       => 'text NULL'
         ),
-        'addArticleList'=> array(
-            'inputType' => 'checkbox',
-            'eval'      => array('submitOnChange'=>true),
-            'sql'       => array('type' => 'boolean', 'default' => false)
-        ),
         'category'    => array(
             'inputType' => 'select',
             'exclude'   => true,
@@ -137,14 +132,14 @@ $GLOBALS['TL_DCA']['tl_dw_courses'] = array(
         (
             'inputType' => 'checkbox',
             'eval'      => array('submitOnChange'=>true),
-            'sql'       => array('type' => 'boolean', 'default' => false)
+            'sql'               => "char(1) NOT NULL default ''"
         ),
         'overwriteMeta' => array
         (
             'label'     => &$GLOBALS['TL_LANG']['tl_dw_courses']['overwriteMeta'],
             'inputType' => 'checkbox',
             'eval'      => array('submitOnChange'=>true, 'tl_class'=>'w50 clr'),
-            'sql'       => array('type' => 'boolean', 'default' => false)
+            'sql'               => "char(1) NOT NULL default ''"
         ),
         'singleSRC' => array
         (
