@@ -269,13 +269,7 @@ class tl_dw_tanks extends Backend
     function formatCheckDates($row): string
     {
         $members = $this->getMemberOptions(); // Add this line to get member options stucture
-        //$memberName = $members[$row['member']] ?? 'N/A';
-
-        if (array_key_exists($row['member'], $members)) {
-            $memberName = $members[$row['member']];
-        } else {
-            $memberName = 'N/A';  // Oder ein anderer Standardwert
-        }
+        $memberName = $members[$row['member']] ?? 'N/A';
 
         $title = $row['title'] ?? '';
         $serialnumber = $row['serialNumber'] ?? '';
