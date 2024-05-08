@@ -15,10 +15,10 @@ declare(strict_types=1);
 /**
  * Legends
  */
-$GLOBALS['TL_LANG']['tl_calendar']['tank_check_legend'] = "TÜV-Termin Einstellungen";
-
+$GLOBALS['TL_LANG']['tl_calendar']['dive_check_legend'] = "Tauchkurs Manager Einstellungen";
 
 /**
  * Fields
  */
 $GLOBALS['TL_LANG']['tl_calendar']['tankChecks'] = ["TÜV-Termine", "Der Kalender enthält TÜV-Termine."];
+$GLOBALS['TL_LANG']['tl_calendar']['diveCourse'] = ["Tauchkurs", "Der Kalender enthält Tauchkurstermine."];

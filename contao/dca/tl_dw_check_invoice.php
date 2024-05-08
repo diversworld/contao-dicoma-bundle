@@ -127,11 +127,11 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
         ),
         'invoiceArticles'  => array(
             'inputType' => 'multiColumnEditor',
+            'tl_class'  => 'compact',
             'eval'      => [
-                'tl_class' => 'clr compact',
                 'submitCallback' => ['tl_dw_check_invoice', 'calculateTotalPrice'],
                 'multiColumnEditor' => [
-                    'skipCopyValuesOnAdd' => false,
+                    'skipCopyValuesOnAdd' => true,
                     'editorTemplate' => 'multi_column_editor_backend_default',
                     'fields' => [
                         'articleName' => [

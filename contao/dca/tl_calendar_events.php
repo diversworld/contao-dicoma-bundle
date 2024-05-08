@@ -27,21 +27,23 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['config']['onsubmit_callback'] = [
 
 // Palettes
 PaletteManipulator::create()
-    ->addLegend('tuv_legend', 'date_legend')
-    ->addLegend('vendor_legend', 'tuv_legend')
+    ->addLegend('dive_legend', 'date_legend')
+    ->addLegend('vendor_legend', 'dive_legend')
     ->addLegend('article_legend', 'vendor_legend')
-    ->addField(['addCheckInfo'], 'tuv_legend', PaletteManipulator::POSITION_APPEND)
+    ->addField(['addCheckInfo', 'addCourseInfo'], 'dive_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_calendar_events');
 
 // Selector
 $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addCheckInfo';
 $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addVendorInfo';
 $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addArticleInfo';
+$GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'addCourseInfo';
 
 // Subpalettes
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addCheckInfo'] = 'addVendorInfo, addArticleInfo';
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addVendorInfo'] = 'vendorName, street, postal, city, vendorEmail, vendorPhone, vendorMobile';
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addArticleInfo'] = 'checkArticles';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['addCourseInfo'] = 'category, courseFee';
 
 // Operations
 $GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations']['tanks'] = [
@@ -53,9 +55,10 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations']['tanks'] = [
 //Fields
 $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['checkArticles'] = [
     'inputType' => 'multiColumnEditor',
+    'tl_class'  => 'compact',
     'eval'      => [
         'multiColumnEditor' => [
-            'skipCopyValuesOnAdd' => false,
+            'skipCopyValuesOnAdd' => true,
             'editorTemplate' => 'multi_column_editor_backend_default',
             'fields' => [
                 'articleName' => [
@@ -113,16 +116,9 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addCheckInfo'] = [
     'filter'    => true,
     'inputType' => 'checkbox',
     'sql'       => "char(1) NOT NULL default ''",
-];$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addVendorInfo'] = [
-    'eval'      => [
-        'submitOnChange' => true,
-        'tl_class'       => 'clr m12',
-    ],
-    'exclude'   => true,
-    'filter'    => true,
-    'inputType' => 'checkbox',
-    'sql'       => "char(1) NOT NULL default ''",
-];$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addArticleInfo'] = [
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addVendorInfo'] = [
     'eval'      => [
         'submitOnChange' => true,
         'tl_class'       => 'clr m12',
@@ -132,17 +128,62 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addCheckInfo'] = [
     'inputType' => 'checkbox',
     'sql'       => "char(1) NOT NULL default ''",
 ];
-$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorName'] = [
-    'eval' => [
-        'mandatory' => false,
-        'maxlength' => 255,
-        'tl_class' => 'w33',
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addArticleInfo'] = [
+    'eval'      => [
+        'submitOnChange' => true,
+        'tl_class'       => 'clr m12',
     ],
+    'exclude'   => true,
+    'filter'    => true,
+    'inputType' => 'checkbox',
+    'sql'       => "char(1) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['addCourseInfo'] = [
+    'eval'      => [
+        'submitOnChange' => true,
+        'tl_class'       => 'clr m12',
+    ],
+    'exclude'   => true,
+    'filter'    => true,
+    'inputType' => 'checkbox',
+    'sql'       => "char(1) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['courseFee'] = [
+    'inputType'     => 'text',
+    'exclude'   => true,
+    'search'    => true,
+    'filter'    => true,
+    'sorting'   => true,
+    'eval'          => array('tl_class'=>'w25'),
+    'sql'           => "DECIMAL(10,2) NOT NULL default '0.00'"
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['category'] = [
+    'inputType' => 'select',
+    'exclude'   => true,
+    'search'    => true,
+    'filter'    => true,
+    'sorting'   => true,
+    'reference' => &$GLOBALS['TL_LANG']['tl_calendar_events'],
+    'options'   => array('basicOption', 'advancedOption', 'professionalOption','technicalOption'),
+    'eval'      => array('includeBlankOption' => true, 'tl_class' => 'w25'),
+    'sql'       => "varchar(255) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['vendorName'] = [
     'exclude' => true,
     'flag' => 1,
     'inputType' => 'text',
     'search' => true,
     'sorting' => true,
+    'eval' => [
+        'mandatory' => false,
+        'maxlength' => 255,
+        'tl_class' => 'w33',
+    ],
     'sql' => "varchar(255) NOT NULL default ''",
 ];
 
