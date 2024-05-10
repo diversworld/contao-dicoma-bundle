@@ -17,6 +17,7 @@ namespace Diversworld\ContaoDicomaBundle\DataContainer;
 use Contao\Calendar;
 use Contao\CalendarEventsModel;
 use Contao\Config;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
@@ -27,21 +28,19 @@ use tl_calendar_events;
 
 class CalendarEvents
 {
-    /*
-     * @param array $arrRow
-     */
+    #[AsCallback(table: 'tl_calendar_events', target: 'list.sorting.child_record')]
     public function listTanks(array $arrRow): string
     {
         $logger = System::getContainer()->get('monolog.logger.contao');
-        $logger->error(
-            'Info Calender Daten: addCheckInfo ' . $arrRow['addCheckInfo'] .'addCourseInfo '. $arrRow['addCourseInfo'] .'startDate ' . $arrRow['startDate'],
-            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-        );
 
         if ($arrRow['addCheckInfo'] === '1') {
             $countTanks = TanksModel::countBy('pid', $arrRow['id']);
 
             $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);
+            $logger->error(
+                'Info Calender Daten: addCheckInfo ' . $arrRow['addCheckInfo'] .' addCourseInfo '. $arrRow['addCourseInfo'] .' startDate ' . $arrRow['startDate'] . ' span ' - $span,
+                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+            );
 
             if ($span > 0) {
                 $date = Date::parse(Config::get(($arrRow['addTime'] ? 'datimFormat' : 'dateFormat')), $arrRow['startTime']).$GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'].Date::parse(Config::get(($arrRow['addTime'] ? 'datimFormat' : 'dateFormat')), $arrRow['endTime']);
@@ -50,6 +49,10 @@ class CalendarEvents
             } else {
                 $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']).($arrRow['addTime'] ? ' '.Date::parse(Config::get('timeFormat'), $arrRow['startTime']).$GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'].Date::parse(Config::get('timeFormat'), $arrRow['endTime']) : '');
             }
+            $logger->error(
+                'Info Calender Daten: date ' . $arrRow['startDate'] . ' date ' . $date,
+                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+            );
 
             return '<div class="tl_content_left">'.$arrRow['title'].' <span style="color:#999;padding-left:3px">['.$date.']</span><span style="color:#999;padding-left:3px">['.$GLOBALS['TL_LANG']['MSC']['tanks'].': '.$countTanks.'x]</span></div>';
         }
@@ -81,7 +84,7 @@ class CalendarEvents
             foreach ($checkArticles as &$row) {
                 // Überprüfen Sie, ob das Feld 'articlePriceNetto' gesetzt ist
                 if (isset($row['articlePriceNetto'])) {
-                    $nettoPrice = number_format($row['articlePriceNetto'], 2);//str_replace(',', '.', $row['articlePriceNetto']);
+                    $nettoPrice = number_format((float)$row['articlePriceNetto'], 2);//str_replace(',', '.', $row['articlePriceNetto']);
                     $grossPrice = $nettoPrice * 1.19;
                     $grossRoundedPrice = ceil($grossPrice / 0.05) * 0.05;
 

@@ -16,10 +16,11 @@ use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents;
 
 // Overwrite child record callback
+/*
 $GLOBALS['TL_DCA']['tl_calendar_events']['list']['sorting']['child_record_callback'] = [
     CalendarEvents::class,
     'listTanks',
-];
+];*/
 
 $GLOBALS['TL_DCA']['tl_calendar_events']['config']['onsubmit_callback'] = [
     [CalendarEvents::class, 'calculateAllGrossPrices']
