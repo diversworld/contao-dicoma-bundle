@@ -30,7 +30,6 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         'ptable'            => 'tl_calendar_events',
         'ctable'            => array('tl_dw_check_invoice'),
         'enableVersioning'  => true,
-        'onsubmit_callback' => [],
         'onload_callback'   => array('tl_dw_tanks', 'filterTanksByEventId'),
         'ondelete_callback' => [],
         'sql'               => array(
@@ -94,7 +93,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
         'pid'               => array(
             'inputType'         => 'select',
             'foreignKey'        => 'tl_calendar_events.title',
-            'eval'              => array('submitOnChange' => true,'mandatory'=> false, 'includeBlankOption'=> true, 'tl_class' => 'w33 clr'),
+            'eval'              => array('submitOnChange' => true, 'alwaysSave' => true,'mandatory'=> false, 'includeBlankOption'=> true, 'tl_class' => 'w33 clr'),
             'sql'               => "int(10) unsigned NOT NULL default 0",
             'relation'          => array('type'=>'hasOne', 'load'=>'lazy'),
             'save_callback'     => array('tl_dw_tanks', 'setLastCheckDate'),
@@ -128,7 +127,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'search'            => true,
             'inputType'         => 'text',
             'eval'              => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
-            //'save_callback'     => array('tl_dw_tanks', 'generateAlias'),
+            'save_callback'     => array('tl_dw_tanks', 'generateAlias'),
             'sql'           => "varchar(255) BINARY NOT NULL default ''"
         ),
         'serialNumber'      => array(
@@ -246,25 +245,19 @@ class tl_dw_tanks extends Backend
             $result = Database::getInstance()
                 ->prepare("SELECT id FROM tl_dw_tanks WHERE alias=? AND id!=?")
                 ->execute($alias, $dc->id);
-
             return $result->numRows > 0;
         };
 
         // Generate the alias if there is none
-        if (!$varValue)
-        {
-            $tankModel = TanksModel::findById($dc->activeRecord->pid);
-            if (!$tankModel) {
-                throw new Exception(sprintf('No tank found with id %s', $dc->activeRecord->pid));
-            }
-            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, $tankModel->jumpTo, $aliasExists);
-        }
-        elseif (preg_match('/^[1-9]\d*$/', $varValue))
-        {
+        if (!$varValue) {
+            $varValue = System::getContainer()->get('contao.slug')->generate(
+                $dc->activeRecord->title,
+                [],
+                $aliasExists
+            );
+        } elseif (preg_match('/^[1-9]\d*$/', $varValue)) {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasNumeric'], $varValue));
-        }
-        elseif ($aliasExists($varValue))
-        {
+        } elseif ($aliasExists($varValue)) {
             throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
         }
 
@@ -352,6 +345,14 @@ class tl_dw_tanks extends Backend
      */
     public function setLastCheckDate($varValue, DataContainer $dc)
     {
+        var_dump($varValue);
+        var_dump($dc->pid);
+        $logger = System::getContainer()->get('monolog.logger.contao');
+        $logger->error(
+            'Varvalue: ' . $varValue,
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+        );
+
         if ($varValue)
         {
             // Holen Sie das startDate des ausgewählten TÜV-Termins
@@ -360,6 +361,11 @@ class tl_dw_tanks extends Backend
                 ->execute($varValue);
 
             $row = $result->fetchAssoc();
+
+            $logger->error(
+                'StartDate: ' . $row['startDate'],
+                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+            );
 
             $lastCheckDate = new DateTime('@'.$row['startDate']);
             $lastCheckDate->modify('+2 years');

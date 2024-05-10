@@ -64,41 +64,42 @@ class CalendarEvents
         $id = $dc->id;
         $model = CalendarEventsModel::findById($id);
 
-        if($dc->addCheckInfo == 1) {
-        $checkArticles = unserialize($model->checkArticles);
+        if($dc->addCheckInfo == 1)
+        {
+            $checkArticles = unserialize($model->checkArticles);
 
-        if (!$checkArticles) {
-            $logger->error(
-                'Ungültige Daten für checkArticles, kann nicht deserialisiert werden: ' . $model->checkArticles,
-                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-            );
-            // handle error, or exit
-            return;
-        }
-
-        // Iterieren Sie über jede Zeile in checkArticles
-        foreach ($checkArticles as &$row) {
-            // Überprüfen Sie, ob das Feld 'articlePriceNetto' gesetzt ist
-            if (isset($row['articlePriceNetto'])) {
-                $nettoPrice = str_replace(',', '.', $row['articlePriceNetto']);
-                $grossPrice = $nettoPrice * 1.19;
-                $grossRoundedPrice = ceil($grossPrice / 0.05) * 0.05;
-
-                // Setzen Sie das Feld 'articlePriceBrutto'
-                $row['articlePriceBrutto'] = number_format($grossRoundedPrice, 2);
-            }  else {
-                $logger->info(
-                    'articlePriceNetto ist nicht gesetzt.',
+            if (!$checkArticles) {
+                $logger->error(
+                    'Ungültige Daten für checkArticles, kann nicht deserialisiert werden: ' . $model->checkArticles,
                     ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
                 );
+                // handle error, or exit
+                return;
             }
-        }
 
-        unset($row);
+            // Iterieren Sie über jede Zeile in checkArticles
+            foreach ($checkArticles as &$row) {
+                // Überprüfen Sie, ob das Feld 'articlePriceNetto' gesetzt ist
+                if (isset($row['articlePriceNetto'])) {
+                    $nettoPrice = number_format($row['articlePriceNetto'], 2);//str_replace(',', '.', $row['articlePriceNetto']);
+                    $grossPrice = $nettoPrice * 1.19;
+                    $grossRoundedPrice = ceil($grossPrice / 0.05) * 0.05;
 
-        // Speichern Sie die Änderungen in der Datenbank
-        Database::getInstance()->prepare("UPDATE tl_calendar_events SET checkArticles = ? WHERE id = ?")
-            ->execute(serialize($checkArticles), $id);
+                    // Setzen Sie das Feld 'articlePriceBrutto'
+                    $row['articlePriceBrutto'] = number_format($grossRoundedPrice, 2);
+                }  else {
+                    $logger->info(
+                        'articlePriceNetto ist nicht gesetzt.',
+                        ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+                    );
+                }
+            }
+
+            unset($row);
+
+            // Speichern Sie die Änderungen in der Datenbank
+            Database::getInstance()->prepare("UPDATE tl_calendar_events SET checkArticles = ? WHERE id = ?")
+                ->execute(serialize($checkArticles), $id);
         }
     }
 }
