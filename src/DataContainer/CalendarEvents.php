@@ -32,7 +32,13 @@ class CalendarEvents
      */
     public function listTanks(array $arrRow): string
     {
-        if ('1' === $arrRow['addCheckInfo']) {
+        $logger = System::getContainer()->get('monolog.logger.contao');
+        $logger->error(
+            'Info Calender Daten: addCheckInfo ' . $arrRow['addCheckInfo'] .'addCourseInfo '. $arrRow['addCourseInfo'] .'startDate ' . $arrRow['startDate'],
+            ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+        );
+
+        if ($arrRow['addCheckInfo'] === '1') {
             $countTanks = TanksModel::countBy('pid', $arrRow['id']);
 
             $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);

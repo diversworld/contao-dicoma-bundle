@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @link https://github.com/diversworld/contao-dicoma-bundle
  */
 use Contao\Backend;
+use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\DC_Table;
@@ -96,17 +97,17 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'eval'              => array('submitOnChange' => true,'mandatory'=> false, 'includeBlankOption'=> true, 'tl_class' => 'w33 clr'),
             'sql'               => "int(10) unsigned NOT NULL default 0",
             'relation'          => array('type'=>'hasOne', 'load'=>'lazy'),
-            'save_callback'     => array(
-                array('tl_dw_tanks', 'setLastCheckDate')
-            ),
+            'save_callback'     => array('tl_dw_tanks', 'setLastCheckDate'),
             'options_callback'  => function() {
-                $db = Contao\Database::getInstance();
+                $options = [];
+                $db = Database::getInstance();
                 $result = $db->execute("SELECT id, title FROM tl_calendar_events WHERE addCheckInfo = '1'");
 
-                $options = [];
-                while($result->next()) {
-                    $options[$result->id] = $result->title;
+                if ($result->numRows > 0) {
+                    $data = $result->fetchAllAssoc();
+                    $options = array_column($data, 'title', 'id');
                 }
+
                 return $options;
             }
         ),
@@ -127,9 +128,7 @@ $GLOBALS['TL_DCA']['tl_dw_tanks'] = array(
             'search'            => true,
             'inputType'         => 'text',
             'eval'              => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
-            'save_callback'     => array(
-                array('tl_dw_tanks', 'generateAlias')
-            ),
+            //'save_callback'     => array('tl_dw_tanks', 'generateAlias'),
             'sql'           => "varchar(255) BINARY NOT NULL default ''"
         ),
         'serialNumber'      => array(
@@ -254,7 +253,11 @@ class tl_dw_tanks extends Backend
         // Generate the alias if there is none
         if (!$varValue)
         {
-            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, TanksModel::findById($dc->activeRecord->pid)->jumpTo, $aliasExists);
+            $tankModel = TanksModel::findById($dc->activeRecord->pid);
+            if (!$tankModel) {
+                throw new Exception(sprintf('No tank found with id %s', $dc->activeRecord->pid));
+            }
+            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, $tankModel->jumpTo, $aliasExists);
         }
         elseif (preg_match('/^[1-9]\d*$/', $varValue))
         {
