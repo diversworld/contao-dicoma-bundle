@@ -19,7 +19,6 @@ use Contao\DC_Table;
 use Contao\Input;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\DataContainer\Tanks;
-use Diversworld\ContaoDicomaBundle\Model\TanksModel;
 
 /**
  * Table tl_dw_tanks
