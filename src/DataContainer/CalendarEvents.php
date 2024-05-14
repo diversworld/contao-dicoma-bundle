@@ -24,11 +24,39 @@ use Contao\DataContainer;
 use Contao\Date;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\Model\TanksModel;
-use tl_calendar_events;
+use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents as CalendarEventsDiversworld;
+use Markocupic\CalendarEventBookingBundle\DataContainer\CalendarEvents as CalendarEventsMarkoCupic;
 
 class CalendarEvents
 {
-    #[AsCallback(table: 'tl_calendar_events', target: 'list.sorting.child_record')]
+       private CalendarEventsMarkoCupic $inner;
+
+       public function __construct(CalendarEventsMarkoCupic $inner)
+       {
+           $this->inner = $inner;
+       }
+
+       #[AsCallback(table: 'tl_calendar_events', target: 'list.sorting.child_record')]
+       public function listEvents(array $arrRow): string
+       {
+           $logger = System::getContainer()->get('monolog.logger.contao');
+
+           $logger->error(
+               'ListTanks: ' . $arrRow,
+               ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+           );
+
+           if ($arrRow['addCheckInfo'] === '1') {
+               // Your listTanks logic goes here
+               return $this->listTanks($arrRow);
+           }
+
+           if ($arrRow['addBookingForm'] === '1') {
+               // Run the original service's logic
+               return $this->inner->listEvents($arrRow);
+           }
+       }
+
     public function listTanks(array $arrRow): string
     {
         $logger = System::getContainer()->get('monolog.logger.contao');
