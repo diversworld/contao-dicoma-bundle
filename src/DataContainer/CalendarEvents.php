@@ -39,31 +39,18 @@ class CalendarEvents
        #[AsCallback(table: 'tl_calendar_events', target: 'list.sorting.child_record')]
        public function listEvents(array $arrRow): string
        {
-           $logger = System::getContainer()->get('monolog.logger.contao');
-
-           $logger->error(
-               'ListTanks: ' . ' addBookingInfo '. $arrRow['addBookingInfo'] . ' addCheckInfo '. $arrRow['addCheckInfo'],
-               ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-           );
-
            if ($arrRow['addCheckInfo'] === '1') {
-               $logger->error(
-                   'ListTanks Diverworld: ',
-                   ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-               );
+
                // Your listTanks logic goes here
                return $this->listTanks($arrRow);
            }
-           if ($arrRow['addCourseInfo'] === '1'){
-               $logger->error(
-                   'ListTanks Markocupic: ',
-                   ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-               );
+           if ($arrRow['addCourseInfo'] === '1' || $arrRow['addBookingInfo'] === '1'){
+
                // Run the original service's logic
                return $this->inner->listEvents($arrRow);
            }
 
-           // Default return
+           // Default return$arrRow['startTime']
            $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);
 
            if ($span > 0)
