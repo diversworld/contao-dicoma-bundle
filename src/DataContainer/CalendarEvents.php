@@ -42,36 +42,52 @@ class CalendarEvents
            $logger = System::getContainer()->get('monolog.logger.contao');
 
            $logger->error(
-               'ListTanks: ' . print_r($arrRow,true),
+               'ListTanks: ' . ' addBookingInfo '. $arrRow['addBookingInfo'] . ' addCheckInfo '. $arrRow['addCheckInfo'],
                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
            );
 
            if ($arrRow['addCheckInfo'] === '1') {
+               $logger->error(
+                   'ListTanks Diverworld: ',
+                   ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+               );
                // Your listTanks logic goes here
                return $this->listTanks($arrRow);
            }
-
-           if ($arrRow['addBookingForm'] === '1') {
+           if ($arrRow['addCourseInfo'] === '1'){
+               $logger->error(
+                   'ListTanks Markocupic: ',
+                   ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+               );
                // Run the original service's logic
                return $this->inner->listEvents($arrRow);
            }
 
            // Default return
-           return 'Default return message';
+           $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);
+
+           if ($span > 0)
+           {
+               $date = Date::parse(Config::get($arrRow['addTime'] ? 'datimFormat' : 'dateFormat'), $arrRow['startTime']) . $GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'] . Date::parse(Config::get($arrRow['addTime'] ? 'datimFormat' : 'dateFormat'), $arrRow['endTime']);
+           }
+           elseif ($arrRow['startTime'] == $arrRow['endTime'])
+           {
+               $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']) . ($arrRow['addTime'] ? ' ' . Date::parse(Config::get('timeFormat'), $arrRow['startTime']) : '');
+           }
+           else
+           {
+               $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']) . ($arrRow['addTime'] ? ' ' . Date::parse(Config::get('timeFormat'), $arrRow['startTime']) . $GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'] . Date::parse(Config::get('timeFormat'), $arrRow['endTime']) : '');
+           }
+
+           return '<div class="tl_content_left">' . $arrRow['title'] . ' <span class="label-info">[' . $date . ']</span></div>';
        }
 
     public function listTanks(array $arrRow): string
     {
-        $logger = System::getContainer()->get('monolog.logger.contao');
-
         if ($arrRow['addCheckInfo'] === '1') {
             $countTanks = TanksModel::countBy('pid', $arrRow['id']);
 
             $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);
-            $logger->error(
-                'Info Calender Daten: addCheckInfo ' . $arrRow['addCheckInfo'] .' addCourseInfo '. $arrRow['addCourseInfo'] .' startDate ' . $arrRow['startDate'] . ' span ' - $span,
-                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-            );
 
             if ($span > 0) {
                 $date = Date::parse(Config::get(($arrRow['addTime'] ? 'datimFormat' : 'dateFormat')), $arrRow['startTime']).$GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'].Date::parse(Config::get(($arrRow['addTime'] ? 'datimFormat' : 'dateFormat')), $arrRow['endTime']);
@@ -80,10 +96,6 @@ class CalendarEvents
             } else {
                 $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']).($arrRow['addTime'] ? ' '.Date::parse(Config::get('timeFormat'), $arrRow['startTime']).$GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'].Date::parse(Config::get('timeFormat'), $arrRow['endTime']) : '');
             }
-            $logger->error(
-                'Info Calender Daten: date ' . $arrRow['startDate'] . ' date ' . $date,
-                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
-            );
 
             return '<div class="tl_content_left">'.$arrRow['title'].' <span style="color:#999;padding-left:3px">['.$date.']</span><span style="color:#999;padding-left:3px">['.$GLOBALS['TL_LANG']['MSC']['tanks'].': '.$countTanks.'x]</span></div>';
         }
