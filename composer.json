@@ -1,6 +1,6 @@
 {
     "name": "diversworld/contao-dicoma-bundle",
-    "version": "1.1.5a",
+    "version": "1.1.6",
     "description": "Dive Course Manager - Verwaltung von Equipment und Tauchkursen für Tauchvereine und oder Tauchschulen",
     "keywords": [
         "contao",
@@ -25,7 +25,7 @@
     },
     "require": {
         "php": "^8.1",
-        "contao/core-bundle": "^5.0",
+        "contao/core-bundle": "4.13 || ^5.0",
         "heimrichhannot/contao-multi-column-editor-bundle": "^2.20",
         "markocupic/calendar-event-booking-bundle": "^5.0"
     },
