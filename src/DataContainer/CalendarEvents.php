@@ -42,7 +42,7 @@ class CalendarEvents
            $logger = System::getContainer()->get('monolog.logger.contao');
 
            $logger->error(
-               'ListTanks: ' . $arrRow,
+               'ListTanks: ' . print_r($arrRow,true),
                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
            );
 
@@ -55,6 +55,9 @@ class CalendarEvents
                // Run the original service's logic
                return $this->inner->listEvents($arrRow);
            }
+
+           // Default return
+           return 'Default return message';
        }
 
     public function listTanks(array $arrRow): string

@@ -17,9 +17,11 @@ services:
         resource: ../src/
         exclude: ../src/{DependencyInjection,Model,Session}
 
-    app.decorating_calendarevents:
-        class: Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents
-        decorates: Markocupic\CalendarEventBookingBundle\DataContainer\CalendarEvents
+    Markocupic\CalendarEventBookingBundle\DataContainer\CalendarEvents: ~
+
+    Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents:
+        arguments:
+            $inner: '@Markocupic\CalendarEventBookingBundle\DataContainer\CalendarEvents'
 
     # Add a session bag
     diversworld.contao_dicoma_bundle.session.factory:
