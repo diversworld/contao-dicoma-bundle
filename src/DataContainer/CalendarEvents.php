@@ -24,7 +24,6 @@ use Contao\DataContainer;
 use Contao\Date;
 use Contao\System;
 use Diversworld\ContaoDicomaBundle\Model\TanksModel;
-use Diversworld\ContaoDicomaBundle\DataContainer\CalendarEvents as CalendarEventsDiversworld;
 use Markocupic\CalendarEventBookingBundle\DataContainer\CalendarEvents as CalendarEventsMarkoCupic;
 
 class CalendarEvents
@@ -39,18 +38,27 @@ class CalendarEvents
        #[AsCallback(table: 'tl_calendar_events', target: 'list.sorting.child_record')]
        public function listEvents(array $arrRow): string
        {
+           $logger = System::getContainer()->get('monolog.logger.contao');
+
            if ($arrRow['addCheckInfo'] === '1') {
 
                // Your listTanks logic goes here
                return $this->listTanks($arrRow);
            }
-           if ($arrRow['addCourseInfo'] === '1' || $arrRow['addBookingInfo'] === '1'){
+
+           $logger->info(
+               'addBookingForm gesetzt? '. $arrRow['addBookingForm'],
+               ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+           );
+
+           if ( $arrRow['addBookingForm'] === '1'){ //$arrRow['addCourseInfo'] === '1' ||
 
                // Run the original service's logic
                return $this->inner->listEvents($arrRow);
            }
 
            // Default return$arrRow['startTime']
+
            $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);
 
            if ($span > 0)
@@ -67,6 +75,8 @@ class CalendarEvents
            }
 
            return '<div class="tl_content_left">' . $arrRow['title'] . ' <span class="label-info">[' . $date . ']</span></div>';
+
+           //return (new \tl_calendar_events())->listEvents($arrRow);
        }
 
     public function listTanks(array $arrRow): string
