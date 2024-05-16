@@ -22,14 +22,13 @@ use Diversworld\ContaoDicomaBundle\Model\CoursesModel;
 $GLOBALS['BE_MOD']['content']['calendar']['tables'][] = 'tl_dw_tanks';
 
 $GLOBALS['BE_MOD']['diversworld'] = [
-    'check_collection' => [
-        'tables' => ['tl_dw_tanks','tl_dw_check_invoice'],
-    ],
+    'check_collection' => ['tables' => ['tl_dw_tanks','tl_dw_check_invoice'],
+    ]
 ];
+
 /**
  * Models
  */
 $GLOBALS['TL_MODELS']['tl_dw_courses']          = CoursesModel::class;
 $GLOBALS['TL_MODELS']['tl_dw_tanks']            = TanksModel::class;
 $GLOBALS['TL_MODELS']['tl_dw_check_invoice']    = CheckInvoiceModel::class;
-

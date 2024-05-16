@@ -9,6 +9,9 @@ services:
         bind:
             #$projectDir: '%kernel.project_dir%'
 
+    Diversworld\ContaoDicomaBundle\EventListener\:
+        resource: '../src/EventListener/*'
+
     Diversworld\ContaoDicomaBundle\EventListener\InvoiceListener:
         tags:
             - { name: contao.hook, hook: onCreateInvoice }
