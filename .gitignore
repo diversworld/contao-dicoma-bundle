@@ -1,6 +1,13 @@
 # Jetbrains
 /.idea/*
 
+# Ignoriere alles außer src und andere relevante Verzeichnisse
+/*
+!/src/
+!/Resources/
+!/contao-dicoma-bundle.php
+# Fügen Sie hier weitere relevante Verzeichnisse oder Dateien hinzu, die Sie verfolgen möchten.
+
 # tools
 /composer.lock
 /.php-cs-fixer.cache
