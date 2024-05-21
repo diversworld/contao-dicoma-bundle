@@ -39,44 +39,46 @@ class CalendarEvents
        public function listEvents(array $arrRow): string
        {
            $logger = System::getContainer()->get('monolog.logger.contao');
-
-           if ($arrRow['addCheckInfo'] === '1') {
-
-               // Your listTanks logic goes here
-               return $this->listTanks($arrRow);
-           }
-
            $logger->info(
-               'addBookingForm gesetzt? '. $arrRow['addBookingForm'],
+               'dicoma::listEvents ',
                ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
            );
+           if (empty($arrRow)) {
+               $logger->info(
+                   'arrRow ist leer',
+                   ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+               );
+           } else {
+               if ($arrRow['addCheckInfo'] === '1') {
+                   $logger->info(
+                       'addCheckInfo = 1 ' . $arrRow['startTime'],
+                       ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+                   );
+                   // Your listTanks logic goes here
+                   return $this->listTanks($arrRow);
+               }
 
-           if ( $arrRow['addBookingForm'] === '1'){ //$arrRow['addCourseInfo'] === '1' ||
+               if ($arrRow['addBookingForm'] === '1') {
+                   $logger->info(
+                       'addBookingForm = 1 ' .$arrRow['startDate']. ' - '.$arrRow['startTime'].' - ' . $arrRow['addTime']. ' - '. Date::parse(Config::get('dateFormat'), $arrRow['startTime']),
+                       ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
+                   );
+                   // Run the original service's logic
+                   return $this->inner->listEvents($arrRow);
+               }
 
-               // Run the original service's logic
-               return $this->inner->listEvents($arrRow);
-           }
+               $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);
 
-           // Default return$arrRow['startTime']
-
-           $span = Calendar::calculateSpan($arrRow['startTime'], $arrRow['endTime']);
-
-           if ($span > 0)
-           {
-               $date = Date::parse(Config::get($arrRow['addTime'] ? 'datimFormat' : 'dateFormat'), $arrRow['startTime']) . $GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'] . Date::parse(Config::get($arrRow['addTime'] ? 'datimFormat' : 'dateFormat'), $arrRow['endTime']);
-           }
-           elseif ($arrRow['startTime'] == $arrRow['endTime'])
-           {
-               $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']) . ($arrRow['addTime'] ? ' ' . Date::parse(Config::get('timeFormat'), $arrRow['startTime']) : '');
-           }
-           else
-           {
-               $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']) . ($arrRow['addTime'] ? ' ' . Date::parse(Config::get('timeFormat'), $arrRow['startTime']) . $GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'] . Date::parse(Config::get('timeFormat'), $arrRow['endTime']) : '');
+               if ($span > 0) {
+                   $date = Date::parse(Config::get($arrRow['addTime'] ? 'datimFormat' : 'dateFormat'), $arrRow['startTime']) . $GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'] . Date::parse(Config::get($arrRow['addTime'] ? 'datimFormat' : 'dateFormat'), $arrRow['endTime']);
+               } elseif ($arrRow['startTime'] == $arrRow['endTime']) {
+                   $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']) . ($arrRow['addTime'] ? ' ' . Date::parse(Config::get('timeFormat'), $arrRow['startTime']) : '');
+               } else {
+                   $date = Date::parse(Config::get('dateFormat'), $arrRow['startTime']) . ($arrRow['addTime'] ? ' ' . Date::parse(Config::get('timeFormat'), $arrRow['startTime']) . $GLOBALS['TL_LANG']['MSC']['cal_timeSeparator'] . Date::parse(Config::get('timeFormat'), $arrRow['endTime']) : '');
+               }
            }
 
            return '<div class="tl_content_left">' . $arrRow['title'] . ' <span class="label-info">[' . $date . ']</span></div>';
-
-           //return (new \tl_calendar_events())->listEvents($arrRow);
        }
 
     public function listTanks(array $arrRow): string
