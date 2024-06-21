@@ -61,7 +61,7 @@ class CalendarEvents
 
            if ($arrRow['addBookingForm'] === '1') {
                $logger->info(
-                   'addBookingForm = 1 startDate: ' .$arrRow['startDate']. ' - startTime: '.$arrRow['startTime'].' - addTime: ' . $arrRow['addTime']. ' - Date::parse: '. Date::parse(Config::get('dateFormat'), $arrRow['startTime']),
+                   'addBookingForm = 1 startDate: ' .$arrRow['startDate']. ' - startTime: '.$arrRow['startTime'].' - addTime: ' . $arrRow['addTime']. ' - Date::parse: '. Date::parse(Config::get('dateFormat'), $arrRow['startDate']),
                    ['contao' => new ContaoContext(__METHOD__, ContaoContext::GENERAL)]
                );
                // Run the original service's logic
