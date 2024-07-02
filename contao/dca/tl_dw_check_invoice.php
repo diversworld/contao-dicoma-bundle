@@ -168,10 +168,10 @@ $GLOBALS['TL_DCA']['tl_dw_check_invoice'] = array(
                         ],
                     ]
                 ]
-            ],
+            ],/*
             'save_callback' => array(
                 array('tl_dw_check_invoice', 'calculateBruttoFromNetto')
-            ),
+            ),*/
             'sql'       => "blob NULL"
         ),
         'priceTotal'         => array
