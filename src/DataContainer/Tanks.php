@@ -94,7 +94,7 @@ class Tanks
 
             // Calculate total price
             $totalPrice = array_reduce($filteredArticles, function ($total, $article) {
-                return $total + str_replace(',', '.', $article['articlePriceBrutto']);
+                return $total + (float) str_replace(',', '.', $article['articlePriceBrutto']);
             }, 0);
 
             $totalPrice = number_format($totalPrice, 2);
