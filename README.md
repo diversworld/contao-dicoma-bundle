@@ -1,5 +1,6 @@
 <img alt="DiversWorld" src="./docs/Diversworld-Wort-Logo.png" width="250"/>
 
+# Wird nicht weiter verfolgt. EEin eigenes Modul (contao-diveclub-buhndle) für Tauchclubs wird bearbeitet 
 # Welcome to Dive Course Manager Bundle (DiCoMa)
 ### Management of equipment and diving courses for diving clubs and/or diving schools
 #### Release 1 contains the management of diving cylinders.
